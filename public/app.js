@@ -2,17 +2,24 @@
   // 状態
   let puzzle = [];
   let solution = [];
-  let board = []; // ユーザーの現在の盤面
-  let memos = []; // メモ: memos[row][col] = Set of numbers
-  let selected = null; // { row, col }
+  let board = [];
+  let memos = [];
+  let selected = null;
   let difficulty = 'medium';
   let memoMode = false;
   let mistakes = 0;
   let timerInterval = null;
   let seconds = 0;
   let gameActive = false;
+  let gameStarted = false; // ゲームが一度でも開始されたか
+
+  // Undo/Redo 履歴
+  let history = [];
+  let historyIndex = -1;
 
   // DOM
+  const startScreen = document.getElementById('start-screen');
+  const gameScreen = document.getElementById('game-screen');
   const boardEl = document.getElementById('board');
   const loadingEl = document.getElementById('loading');
   const timerEl = document.getElementById('timer');
@@ -21,30 +28,84 @@
   const completeModal = document.getElementById('complete-modal');
   const completeTime = document.getElementById('complete-time');
   const completeMistakes = document.getElementById('complete-mistakes');
+  const completeDifficulty = document.getElementById('complete-difficulty');
+  const confirmModal = document.getElementById('confirm-modal');
+
+  const DIFFICULTY_LABELS = { easy: '初級', medium: '中級', hard: '上級' };
 
   // 初期化
   function init() {
+    setupStartScreen();
     setupDifficultyButtons();
     setupNumpad();
     setupMemoToggle();
+    setupUndoRedo();
     setupKeyboard();
-    document.getElementById('new-game').addEventListener('click', newGame);
+    setupConfirmDialog();
+    setupShareButtons();
+
+    document.getElementById('new-game').addEventListener('click', requestNewGame);
     document.getElementById('play-again').addEventListener('click', () => {
       completeModal.classList.add('hidden');
-      newGame();
+      startNewGame();
     });
-    newGame();
   }
 
-  // 難易度ボタン
+  // スタート画面
+  function setupStartScreen() {
+    document.querySelectorAll('.start-diff-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.start-diff-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        difficulty = btn.dataset.diff;
+        // ゲーム画面の難易度ボタンも同期
+        syncDifficultyButtons();
+      });
+    });
+
+    document.getElementById('start-game').addEventListener('click', () => {
+      startScreen.classList.add('hidden');
+      gameScreen.classList.remove('hidden');
+      startNewGame();
+    });
+  }
+
+  function syncDifficultyButtons() {
+    document.querySelectorAll('.diff-btn').forEach((b) => {
+      b.classList.toggle('active', b.dataset.diff === difficulty);
+    });
+    document.querySelectorAll('.start-diff-btn').forEach((b) => {
+      b.classList.toggle('active', b.dataset.diff === difficulty);
+    });
+  }
+
+  // 難易度ボタン（ゲーム画面内）
   function setupDifficultyButtons() {
     document.querySelectorAll('.diff-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.diff-btn').forEach((b) => b.classList.remove('active'));
-        btn.classList.add('active');
         difficulty = btn.dataset.diff;
+        syncDifficultyButtons();
       });
     });
+  }
+
+  // 確認ダイアログ
+  function setupConfirmDialog() {
+    document.getElementById('confirm-no').addEventListener('click', () => {
+      confirmModal.classList.add('hidden');
+    });
+    document.getElementById('confirm-yes').addEventListener('click', () => {
+      confirmModal.classList.add('hidden');
+      startNewGame();
+    });
+  }
+
+  function requestNewGame() {
+    if (gameActive) {
+      confirmModal.classList.remove('hidden');
+    } else {
+      startNewGame();
+    }
   }
 
   // 数字パッド
@@ -60,52 +121,189 @@
 
   // メモモードトグル
   function setupMemoToggle() {
-    memoToggleBtn.addEventListener('click', () => {
-      memoMode = !memoMode;
-      memoToggleBtn.textContent = `メモモード: ${memoMode ? 'ON' : 'OFF'}`;
-      memoToggleBtn.classList.toggle('active', memoMode);
-    });
+    memoToggleBtn.addEventListener('click', toggleMemoMode);
+  }
+
+  function toggleMemoMode() {
+    memoMode = !memoMode;
+    updateMemoButtonText();
+  }
+
+  function updateMemoButtonText() {
+    memoToggleBtn.innerHTML = `メモモード: ${memoMode ? 'ON' : 'OFF'} <kbd>M</kbd>`;
+    memoToggleBtn.classList.toggle('active', memoMode);
+  }
+
+  // Undo/Redo ボタン
+  function setupUndoRedo() {
+    document.getElementById('undo-btn').addEventListener('click', undo);
+    document.getElementById('redo-btn').addEventListener('click', redo);
   }
 
   // キーボード入力
   function setupKeyboard() {
     document.addEventListener('keydown', (e) => {
+      // Undo/Redo はゲーム中のみ
+      if (gameActive) {
+        // Ctrl+Z: Undo
+        if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === 'z') {
+          e.preventDefault();
+          undo();
+          return;
+        }
+        // Ctrl+Y or Ctrl+Shift+Z: Redo
+        if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+          e.preventDefault();
+          redo();
+          return;
+        }
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'Z') {
+          e.preventDefault();
+          redo();
+          return;
+        }
+      }
+
       if (!gameActive) return;
 
+      // 数字入力
       if (e.key >= '1' && e.key <= '9') {
         if (selected) inputNumber(parseInt(e.key));
-      } else if (e.key === '0' || e.key === 'Backspace' || e.key === 'Delete') {
+        return;
+      }
+      if (e.key === '0' || e.key === 'Backspace' || e.key === 'Delete') {
         if (selected) inputNumber(0);
-      } else if (e.key === 'ArrowUp' && selected) {
-        e.preventDefault();
-        selectCell(Math.max(0, selected.row - 1), selected.col);
-      } else if (e.key === 'ArrowDown' && selected) {
-        e.preventDefault();
-        selectCell(Math.min(8, selected.row + 1), selected.col);
-      } else if (e.key === 'ArrowLeft' && selected) {
-        e.preventDefault();
-        selectCell(selected.row, Math.max(0, selected.col - 1));
-      } else if (e.key === 'ArrowRight' && selected) {
-        e.preventDefault();
-        selectCell(selected.row, Math.min(8, selected.col + 1));
-      } else if (e.key === 'm' || e.key === 'M') {
-        memoToggleBtn.click();
+        return;
+      }
+
+      // メモモード切替
+      if (e.key === 'm' || e.key === 'M') {
+        if (!e.ctrlKey && !e.metaKey) {
+          toggleMemoMode();
+          return;
+        }
+      }
+
+      // セル移動: 矢印キー
+      if (selected) {
+        let moved = false;
+        switch (e.key) {
+          case 'ArrowUp':
+            selectCell(Math.max(0, selected.row - 1), selected.col);
+            moved = true;
+            break;
+          case 'ArrowDown':
+            selectCell(Math.min(8, selected.row + 1), selected.col);
+            moved = true;
+            break;
+          case 'ArrowLeft':
+            selectCell(selected.row, Math.max(0, selected.col - 1));
+            moved = true;
+            break;
+          case 'ArrowRight':
+            selectCell(selected.row, Math.min(8, selected.col + 1));
+            moved = true;
+            break;
+        }
+        if (moved) {
+          e.preventDefault();
+          return;
+        }
+
+        // WASD移動
+        const lower = e.key.toLowerCase();
+        if (!e.ctrlKey && !e.metaKey) {
+          switch (lower) {
+            case 'w':
+              e.preventDefault();
+              selectCell(Math.max(0, selected.row - 1), selected.col);
+              return;
+            case 's':
+              e.preventDefault();
+              selectCell(Math.min(8, selected.row + 1), selected.col);
+              return;
+            case 'a':
+              e.preventDefault();
+              selectCell(selected.row, Math.max(0, selected.col - 1));
+              return;
+            case 'd':
+              e.preventDefault();
+              selectCell(selected.row, Math.min(8, selected.col + 1));
+              return;
+          }
+        }
+
+        // Emacs キーバインド (Ctrl+P/N/B/F)
+        if (e.ctrlKey || e.metaKey) {
+          switch (lower) {
+            case 'p': // 上
+              e.preventDefault();
+              selectCell(Math.max(0, selected.row - 1), selected.col);
+              return;
+            case 'n': // 下
+              e.preventDefault();
+              selectCell(Math.min(8, selected.row + 1), selected.col);
+              return;
+            case 'b': // 左
+              e.preventDefault();
+              selectCell(selected.row, Math.max(0, selected.col - 1));
+              return;
+            case 'f': // 右
+              e.preventDefault();
+              selectCell(selected.row, Math.min(8, selected.col + 1));
+              return;
+          }
+        }
       }
     });
   }
 
+  // === Undo/Redo ===
+  function saveState() {
+    const state = {
+      board: board.map((r) => [...r]),
+      memos: memos.map((r) => r.map((s) => new Set(s))),
+      mistakes: mistakes,
+    };
+    // 現在位置より先の履歴を切り捨て
+    history = history.slice(0, historyIndex + 1);
+    history.push(state);
+    historyIndex = history.length - 1;
+  }
+
+  function restoreState(state) {
+    board = state.board.map((r) => [...r]);
+    memos = state.memos.map((r) => r.map((s) => new Set(s)));
+    mistakes = state.mistakes;
+    updateMistakes();
+    renderBoard();
+  }
+
+  function undo() {
+    if (historyIndex <= 0) return;
+    historyIndex--;
+    restoreState(history[historyIndex]);
+  }
+
+  function redo() {
+    if (historyIndex >= history.length - 1) return;
+    historyIndex++;
+    restoreState(history[historyIndex]);
+  }
+
   // 新しいゲーム開始
-  async function newGame() {
+  async function startNewGame() {
     loadingEl.classList.remove('hidden');
     gameActive = false;
     selected = null;
     mistakes = 0;
     seconds = 0;
     memoMode = false;
-    memoToggleBtn.textContent = 'メモモード: OFF';
-    memoToggleBtn.classList.remove('active');
+    updateMemoButtonText();
     updateTimer();
     updateMistakes();
+    history = [];
+    historyIndex = -1;
 
     if (timerInterval) clearInterval(timerInterval);
 
@@ -119,8 +317,12 @@
         Array.from({ length: 9 }, () => new Set())
       );
 
+      // 初期状態を履歴に保存
+      saveState();
+
       renderBoard();
       gameActive = true;
+      gameStarted = true;
       timerInterval = setInterval(() => {
         seconds++;
         updateTimer();
@@ -198,7 +400,6 @@
           }
         }
 
-        // 同じ数字のハイライト
         const selectedVal = board[selected.row][selected.col];
         if (selectedVal !== 0 && board[r][c] === selectedVal) {
           td.classList.add('same-number');
@@ -212,11 +413,12 @@
     if (!selected) return;
     const { row, col } = selected;
 
-    // 初期配置セルは変更不可
     if (puzzle[row][col] !== 0) return;
 
+    // 状態を保存（Undo用）
+    saveState();
+
     if (memoMode && num !== 0) {
-      // メモモード
       if (memos[row][col].has(num)) {
         memos[row][col].delete(num);
       } else {
@@ -224,7 +426,6 @@
       }
       board[row][col] = 0;
     } else {
-      // 通常入力
       if (num === 0) {
         board[row][col] = 0;
         memos[row][col].clear();
@@ -232,12 +433,10 @@
         board[row][col] = num;
         memos[row][col].clear();
 
-        // 正誤チェック
         if (num !== solution[row][col]) {
           mistakes++;
           updateMistakes();
         } else {
-          // 正解の場合、同じ行・列・ボックスのメモからその数字を削除
           clearMemosRelated(row, col, num);
         }
       }
@@ -262,7 +461,7 @@
     }
   }
 
-  // 数字パッドの状態更新（9個揃った数字をグレーアウト）
+  // 数字パッドの状態更新
   function updateNumpadState() {
     for (let n = 1; n <= 9; n++) {
       let count = 0;
@@ -284,16 +483,45 @@
       }
     }
 
-    // クリア
     gameActive = false;
     if (timerInterval) clearInterval(timerInterval);
 
+    completeDifficulty.textContent = `難易度: ${DIFFICULTY_LABELS[difficulty]}`;
     completeTime.textContent = `タイム: ${formatTime(seconds)}`;
     completeMistakes.textContent = `ミス: ${mistakes}回`;
     completeModal.classList.remove('hidden');
   }
 
-  // タイマー表示更新
+  // シェア機能
+  function setupShareButtons() {
+    document.getElementById('share-x').addEventListener('click', shareToX);
+    document.getElementById('share-copy').addEventListener('click', copyResult);
+  }
+
+  function getShareText() {
+    const diffLabel = DIFFICULTY_LABELS[difficulty];
+    const time = formatTime(seconds);
+    return `ナンプレ（${diffLabel}）を${time}でクリア！ミス${mistakes}回\n#ナンプレ #数独 #Sudoku\n${location.origin}`;
+  }
+
+  function shareToX() {
+    const text = encodeURIComponent(getShareText());
+    window.open(`https://x.com/intent/tweet?text=${text}`, '_blank');
+  }
+
+  function copyResult() {
+    const text = getShareText();
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('share-copy');
+      const original = btn.textContent;
+      btn.textContent = 'コピーしました！';
+      setTimeout(() => {
+        btn.textContent = original;
+      }, 2000);
+    });
+  }
+
+  // タイマー
   function updateTimer() {
     timerEl.textContent = formatTime(seconds);
   }
@@ -304,7 +532,6 @@
     return `${min}:${sec}`;
   }
 
-  // ミス表示更新
   function updateMistakes() {
     mistakesEl.textContent = `ミス: ${mistakes}`;
   }

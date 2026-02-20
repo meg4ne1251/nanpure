@@ -8,7 +8,8 @@ body {
   font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
   background: #f0f4f8;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   min-height: 100vh;
   padding: 20px;
 }
@@ -22,10 +23,156 @@ body {
   gap: 16px;
 }
 
+header {
+  text-align: center;
+}
+
 h1 {
   font-size: 2rem;
   color: #1a365d;
   letter-spacing: 0.1em;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: #718096;
+  margin-top: 2px;
+}
+
+/* スタート画面 */
+#start-screen {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.start-content {
+  text-align: center;
+  width: 100%;
+}
+
+.start-content h2 {
+  font-size: 1.2rem;
+  color: #4a5568;
+  margin-bottom: 16px;
+}
+
+#start-difficulty-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.start-diff-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 24px;
+  border: 2px solid #3182ce;
+  background: white;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 110px;
+}
+
+.start-diff-btn.active {
+  background: #3182ce;
+  color: white;
+}
+
+.start-diff-btn .diff-label {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.start-diff-btn .diff-desc {
+  font-size: 0.75rem;
+  margin-top: 4px;
+  opacity: 0.8;
+}
+
+#start-game {
+  padding: 14px 48px;
+  background: #38a169;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#start-game:hover {
+  background: #2f855a;
+}
+
+/* ルール・遊び方 */
+.rules-section {
+  width: 100%;
+  max-width: 450px;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.rules-section summary {
+  padding: 12px 16px;
+  font-weight: bold;
+  color: #2d3748;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rules-section summary::before {
+  content: '▶';
+  font-size: 0.7rem;
+  transition: transform 0.2s;
+}
+
+.rules-section[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.rules-content {
+  padding: 0 16px 16px;
+}
+
+.rules-content h3 {
+  font-size: 0.95rem;
+  color: #2d3748;
+  margin: 12px 0 6px;
+}
+
+.rules-content h3:first-child {
+  margin-top: 0;
+}
+
+.rules-content ul {
+  padding-left: 20px;
+  font-size: 0.85rem;
+  color: #4a5568;
+  line-height: 1.7;
+}
+
+.rules-content p {
+  font-size: 0.85rem;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+.rules-in-game {
+  margin-top: 4px;
 }
 
 /* コントロール */
@@ -39,7 +186,7 @@ h1 {
 
 #difficulty-buttons {
   display: flex;
-  gap: 4px;
+  gap: 0;
 }
 
 .diff-btn {
@@ -209,26 +356,55 @@ h1 {
   cursor: default;
 }
 
-/* メモモード */
-#memo-toggle-container {
+/* アクションボタン群 */
+#action-buttons {
+  display: flex;
+  gap: 8px;
   width: 100%;
   max-width: 350px;
 }
 
-#memo-toggle {
-  width: 100%;
-  padding: 10px;
-  border: 2px solid #805ad5;
+#action-buttons button {
+  flex: 1;
+  padding: 10px 4px;
+  border: 2px solid #a0aec0;
   background: white;
-  color: #805ad5;
   border-radius: 8px;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+#action-buttons button:hover {
+  background: #edf2f7;
+}
+
+#action-buttons kbd {
+  font-size: 0.65rem;
+  background: #edf2f7;
+  padding: 2px 5px;
+  border-radius: 3px;
+  border: 1px solid #cbd5e0;
+  font-family: inherit;
+}
+
+#memo-toggle {
+  border-color: #805ad5 !important;
+  color: #805ad5;
 }
 
 #memo-toggle.active {
-  background: #805ad5;
+  background: #805ad5 !important;
+  color: white;
+}
+
+#memo-toggle.active kbd {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.4);
   color: white;
 }
 
@@ -244,8 +420,8 @@ h1 {
   color: #4a5568;
 }
 
-/* モーダル */
-#complete-modal {
+/* モーダル共通 */
+.modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
@@ -257,38 +433,110 @@ h1 {
 
 .modal-content {
   background: white;
-  padding: 40px;
+  padding: 32px;
   border-radius: 16px;
   text-align: center;
-  max-width: 360px;
+  max-width: 380px;
   width: 90%;
 }
 
 .modal-content h2 {
-  font-size: 2rem;
+  font-size: 1.6rem;
+  color: #2d3748;
+  margin-bottom: 12px;
+}
+
+#complete-modal .modal-content h2 {
   color: #38a169;
-  margin-bottom: 16px;
+  font-size: 2rem;
 }
 
 .modal-content p {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: #4a5568;
   margin-bottom: 8px;
 }
 
-#play-again {
-  margin-top: 20px;
-  padding: 12px 32px;
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  padding: 10px 28px;
   background: #3182ce;
   color: white;
   border: none;
   border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #2b6cb0;
+}
+
+.btn-secondary {
+  padding: 10px 28px;
+  background: #e2e8f0;
+  color: #4a5568;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+  background: #cbd5e0;
+}
+
+.btn-share {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#share-x {
+  background: #000;
+  color: white;
+}
+
+#share-x:hover {
+  background: #333;
+}
+
+.btn-share-copy {
+  background: #edf2f7;
+  color: #4a5568;
+}
+
+.btn-share-copy:hover {
+  background: #e2e8f0;
+}
+
+#play-again {
+  margin-top: 16px;
 }
 
 .hidden {
   display: none !important;
+}
+
+/* フッター */
+footer {
+  margin-top: 32px;
+  padding: 16px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #a0aec0;
 }
 
 /* レスポンシブ */
@@ -302,5 +550,16 @@ h1 {
   .num-btn {
     padding: 10px;
     font-size: 1.1rem;
+  }
+  #action-buttons button {
+    padding: 8px 2px;
+    font-size: 0.75rem;
+  }
+  #action-buttons kbd {
+    display: none;
+  }
+  .start-diff-btn {
+    padding: 12px 16px;
+    min-width: 90px;
   }
 }

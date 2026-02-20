@@ -3,58 +3,192 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ナンプレ</title>
+  <title>ナンプレ - 無料で遊べるオンライン数独パズル</title>
+  <meta name="description" content="ナンプレ（数独）を無料でオンラインプレイ。初級・中級・上級の3段階の難易度。毎回異なるランダムなパズルで何度でも楽しめます。">
+  <meta name="keywords" content="ナンプレ,数独,Sudoku,パズル,無料,オンライン,脳トレ,ブラウザゲーム">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://nanpure.example.com/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="ナンプレ - 無料オンライン数独パズル">
+  <meta property="og:description" content="初級・中級・上級の3段階で遊べる無料ナンプレ。毎回ランダム生成で飽きない！">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://nanpure.example.com/">
+  <meta property="og:locale" content="ja_JP">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="ナンプレ - 無料オンライン数独パズル">
+  <meta name="twitter:description" content="初級・中級・上級の3段階で遊べる無料ナンプレ。毎回ランダム生成で飽きない！">
+
   <link rel="stylesheet" href="style.css">
+
+  <!-- 構造化データ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "ナンプレ",
+    "description": "無料で遊べるオンラインナンプレ（数独）パズル。3段階の難易度で毎回異なる問題を楽しめます。",
+    "applicationCategory": "Game",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "JPY"
+    }
+  }
+  </script>
 </head>
 <body>
   <div id="app">
-    <h1>ナンプレ</h1>
+    <header>
+      <h1>ナンプレ</h1>
+      <p class="subtitle">無料オンライン数独パズル</p>
+    </header>
 
-    <div id="controls">
-      <div id="difficulty-buttons">
-        <button class="diff-btn" data-diff="easy">初級</button>
-        <button class="diff-btn active" data-diff="medium">中級</button>
-        <button class="diff-btn" data-diff="hard">上級</button>
+    <!-- スタート画面 -->
+    <div id="start-screen">
+      <div class="start-content">
+        <h2>難易度を選んでスタート</h2>
+        <div id="start-difficulty-buttons">
+          <button class="start-diff-btn" data-diff="easy">
+            <span class="diff-label">初級</span>
+            <span class="diff-desc">ヒント 36〜40</span>
+          </button>
+          <button class="start-diff-btn active" data-diff="medium">
+            <span class="diff-label">中級</span>
+            <span class="diff-desc">ヒント 28〜32</span>
+          </button>
+          <button class="start-diff-btn" data-diff="hard">
+            <span class="diff-label">上級</span>
+            <span class="diff-desc">ヒント 22〜26</span>
+          </button>
+        </div>
+        <button id="start-game">ゲームスタート</button>
       </div>
-      <button id="new-game">新しいゲーム</button>
+
+      <!-- ルール・遊び方 -->
+      <details class="rules-section">
+        <summary>ルール・遊び方</summary>
+        <div class="rules-content">
+          <h3>基本ルール</h3>
+          <ul>
+            <li>9×9のマスに1〜9の数字を埋めます</li>
+            <li><strong>横一列</strong>（行）に1〜9が一つずつ入ります</li>
+            <li><strong>縦一列</strong>（列）に1〜9が一つずつ入ります</li>
+            <li><strong>太線で囲まれた3×3のブロック</strong>に1〜9が一つずつ入ります</li>
+          </ul>
+          <h3>操作方法</h3>
+          <ul>
+            <li><strong>セル選択:</strong> クリック / 矢印キー / WASD</li>
+            <li><strong>数字入力:</strong> 数字キー(1-9) / 画面の数字ボタン</li>
+            <li><strong>消去:</strong> 0 / Backspace / Delete / 消ボタン</li>
+            <li><strong>メモモード切替:</strong> Mキー</li>
+            <li><strong>元に戻す:</strong> Ctrl+Z</li>
+            <li><strong>やり直し:</strong> Ctrl+Y / Ctrl+Shift+Z</li>
+          </ul>
+          <h3>メモ機能</h3>
+          <p>メモモードをONにすると、候補数字を小さくメモできます。確定する数字が見つかったらメモモードをOFFにして入力しましょう。</p>
+        </div>
+      </details>
     </div>
 
-    <div id="game-info">
-      <span id="timer">00:00</span>
-      <span id="mistakes">ミス: 0</span>
+    <!-- ゲーム画面 -->
+    <div id="game-screen" class="hidden">
+      <div id="controls">
+        <div id="difficulty-buttons">
+          <button class="diff-btn" data-diff="easy">初級</button>
+          <button class="diff-btn active" data-diff="medium">中級</button>
+          <button class="diff-btn" data-diff="hard">上級</button>
+        </div>
+        <button id="new-game">新しいゲーム</button>
+      </div>
+
+      <div id="game-info">
+        <span id="timer">00:00</span>
+        <span id="mistakes">ミス: 0</span>
+      </div>
+
+      <div id="board-container">
+        <table id="board"></table>
+        <div id="loading" class="hidden">生成中...</div>
+      </div>
+
+      <div id="numpad">
+        <button class="num-btn" data-num="1">1</button>
+        <button class="num-btn" data-num="2">2</button>
+        <button class="num-btn" data-num="3">3</button>
+        <button class="num-btn" data-num="4">4</button>
+        <button class="num-btn" data-num="5">5</button>
+        <button class="num-btn" data-num="6">6</button>
+        <button class="num-btn" data-num="7">7</button>
+        <button class="num-btn" data-num="8">8</button>
+        <button class="num-btn" data-num="9">9</button>
+        <button class="num-btn erase-btn" data-num="0">消</button>
+      </div>
+
+      <div id="action-buttons">
+        <button id="memo-toggle">メモモード: OFF <kbd>M</kbd></button>
+        <button id="undo-btn">戻る <kbd>Ctrl+Z</kbd></button>
+        <button id="redo-btn">進む <kbd>Ctrl+Y</kbd></button>
+      </div>
+
+      <!-- ゲーム中のルール表示 -->
+      <details class="rules-section rules-in-game">
+        <summary>ルール・遊び方</summary>
+        <div class="rules-content">
+          <h3>基本ルール</h3>
+          <ul>
+            <li>9×9のマスに1〜9の数字を埋めます</li>
+            <li><strong>横一列</strong>（行）に1〜9が一つずつ入ります</li>
+            <li><strong>縦一列</strong>（列）に1〜9が一つずつ入ります</li>
+            <li><strong>太線で囲まれた3×3のブロック</strong>に1〜9が一つずつ入ります</li>
+          </ul>
+          <h3>操作方法</h3>
+          <ul>
+            <li><strong>セル選択:</strong> クリック / 矢印キー / WASD</li>
+            <li><strong>数字入力:</strong> 数字キー(1-9) / 画面の数字ボタン</li>
+            <li><strong>消去:</strong> 0 / Backspace / Delete / 消ボタン</li>
+            <li><strong>メモモード切替:</strong> Mキー</li>
+            <li><strong>元に戻す:</strong> Ctrl+Z</li>
+            <li><strong>やり直し:</strong> Ctrl+Y / Ctrl+Shift+Z</li>
+          </ul>
+        </div>
+      </details>
     </div>
 
-    <div id="board-container">
-      <table id="board"></table>
-      <div id="loading" class="hidden">生成中...</div>
+    <!-- 確認ダイアログ -->
+    <div id="confirm-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <h2>確認</h2>
+        <p>現在のゲームを中断して新しいゲームを始めますか？</p>
+        <div class="modal-buttons">
+          <button id="confirm-yes" class="btn-primary">はい</button>
+          <button id="confirm-no" class="btn-secondary">いいえ</button>
+        </div>
+      </div>
     </div>
 
-    <div id="numpad">
-      <button class="num-btn" data-num="1">1</button>
-      <button class="num-btn" data-num="2">2</button>
-      <button class="num-btn" data-num="3">3</button>
-      <button class="num-btn" data-num="4">4</button>
-      <button class="num-btn" data-num="5">5</button>
-      <button class="num-btn" data-num="6">6</button>
-      <button class="num-btn" data-num="7">7</button>
-      <button class="num-btn" data-num="8">8</button>
-      <button class="num-btn" data-num="9">9</button>
-      <button class="num-btn erase-btn" data-num="0">消</button>
-    </div>
-
-    <div id="memo-toggle-container">
-      <button id="memo-toggle">メモモード: OFF</button>
-    </div>
-
-    <div id="complete-modal" class="hidden">
+    <!-- クリアモーダル -->
+    <div id="complete-modal" class="modal-overlay hidden">
       <div class="modal-content">
         <h2>クリア！</h2>
+        <p id="complete-difficulty"></p>
         <p id="complete-time"></p>
         <p id="complete-mistakes"></p>
-        <button id="play-again">もう一度プレイ</button>
+        <div class="modal-buttons">
+          <button id="share-x" class="btn-share">X でシェア</button>
+          <button id="share-copy" class="btn-share btn-share-copy">結果をコピー</button>
+        </div>
+        <button id="play-again" class="btn-primary">もう一度プレイ</button>
       </div>
     </div>
   </div>
+
+  <footer>
+    <p>&copy; 2026 ナンプレ - 無料オンライン数独パズル</p>
+  </footer>
 
   <script src="app.js"></script>
 </body>
