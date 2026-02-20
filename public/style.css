@@ -1,0 +1,306 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+  background: #f0f4f8;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+#app {
+  max-width: 500px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+h1 {
+  font-size: 2rem;
+  color: #1a365d;
+  letter-spacing: 0.1em;
+}
+
+/* コントロール */
+#controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#difficulty-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.diff-btn {
+  padding: 8px 16px;
+  border: 2px solid #3182ce;
+  background: white;
+  color: #3182ce;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.diff-btn:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+.diff-btn:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+.diff-btn.active {
+  background: #3182ce;
+  color: white;
+}
+
+#new-game {
+  padding: 8px 20px;
+  background: #38a169;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#new-game:hover {
+  background: #2f855a;
+}
+
+/* ゲーム情報 */
+#game-info {
+  display: flex;
+  gap: 24px;
+  font-size: 1.1rem;
+  color: #4a5568;
+}
+
+/* 盤面 */
+#board-container {
+  position: relative;
+  width: 100%;
+  max-width: 450px;
+  aspect-ratio: 1;
+}
+
+#board {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  border: 3px solid #1a365d;
+  table-layout: fixed;
+}
+
+#board td {
+  border: 1px solid #a0aec0;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 1.4rem;
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+#board td.given {
+  font-weight: bold;
+  color: #1a365d;
+  background: #edf2f7;
+}
+
+#board td.user-input {
+  color: #3182ce;
+}
+
+#board td.selected {
+  background: #bee3f8 !important;
+}
+
+#board td.highlighted {
+  background: #e2e8f0;
+}
+
+#board td.error {
+  color: #e53e3e;
+  background: #fed7d7 !important;
+}
+
+#board td.same-number {
+  background: #c3dafe;
+}
+
+/* 3x3ボックスの太線 */
+#board tr:nth-child(3n) td {
+  border-bottom: 3px solid #1a365d;
+}
+
+#board td:nth-child(3n) {
+  border-right: 3px solid #1a365d;
+}
+
+/* メモ表示 */
+.memo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.memo-grid span {
+  font-size: 0.55rem;
+  color: #718096;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 数字パッド */
+#numpad {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  width: 100%;
+  max-width: 350px;
+}
+
+.num-btn {
+  padding: 14px;
+  font-size: 1.3rem;
+  border: 2px solid #cbd5e0;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.num-btn:hover {
+  background: #edf2f7;
+}
+
+.num-btn:active {
+  background: #bee3f8;
+}
+
+.num-btn.erase-btn {
+  background: #fed7d7;
+  border-color: #fc8181;
+  color: #c53030;
+}
+
+.num-btn.completed {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* メモモード */
+#memo-toggle-container {
+  width: 100%;
+  max-width: 350px;
+}
+
+#memo-toggle {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #805ad5;
+  background: white;
+  color: #805ad5;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#memo-toggle.active {
+  background: #805ad5;
+  color: white;
+}
+
+/* ローディング */
+#loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 1.2rem;
+  color: #4a5568;
+}
+
+/* モーダル */
+#complete-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-content {
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 360px;
+  width: 90%;
+}
+
+.modal-content h2 {
+  font-size: 2rem;
+  color: #38a169;
+  margin-bottom: 16px;
+}
+
+.modal-content p {
+  font-size: 1.1rem;
+  color: #4a5568;
+  margin-bottom: 8px;
+}
+
+#play-again {
+  margin-top: 20px;
+  padding: 12px 32px;
+  background: #3182ce;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* レスポンシブ */
+@media (max-width: 480px) {
+  #board td {
+    font-size: 1.1rem;
+  }
+  .memo-grid span {
+    font-size: 0.45rem;
+  }
+  .num-btn {
+    padding: 10px;
+    font-size: 1.1rem;
+  }
+}
