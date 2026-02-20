@@ -1,0 +1,91 @@
+name: Performance & Quality
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    name: Lighthouse CI
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start server
+        run: |
+          npm start &
+          sleep 3
+          echo "Server started"
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v9
+        with:
+          configPath: './.github/lighthouse-ci.json'
+          uploadArtifacts: true
+        continue-on-error: true
+
+  bundle-size:
+    runs-on: ubuntu-latest
+    name: Bundle size analysis
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check file sizes
+        run: |
+          echo "=== JavaScript Files ==="
+          find public src -name "*.js" -exec du -h {} + | sort -h
+          echo ""
+          echo "=== CSS Files ==="
+          find public -name "*.css" -exec du -h {} + | sort -h
+          echo ""
+          echo "=== HTML Files ==="
+          find public -name "*.html" -exec du -h {} + | sort -h
+
+  dependency-health:
+    runs-on: ubuntu-latest
+    name: Dependency health check
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for outdated packages
+        run: npm outdated
+        continue-on-error: true
+
+      - name: Check for vulnerabilities
+        run: npm audit --omit=dev
+        continue-on-error: true

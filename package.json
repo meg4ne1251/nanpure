@@ -5,9 +5,23 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "node --watch src/server.js"
+    "dev": "node --watch src/server.js",
+    "lint": "eslint src/ public/ --ext .js",
+    "lint:fix": "eslint src/ public/ --ext .js --fix",
+    "format": "prettier --write \"src/**/*.js\" \"public/**/*.js\" \"*.md\"",
+    "format:check": "prettier --check \"src/**/*.js\" \"public/**/*.js\" \"*.md\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "jest": "^29.7.0",
+    "prettier": "^3.2.5"
   }
 }

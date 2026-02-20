@@ -11,7 +11,6 @@
   let timerInterval = null;
   let seconds = 0;
   let gameActive = false;
-  let gameStarted = false; // ゲームが一度でも開始されたか
 
   // Undo/Redo 履歴
   let history = [];
@@ -113,7 +112,7 @@
     document.querySelectorAll('.num-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
         if (!gameActive || !selected) return;
-        const num = parseInt(btn.dataset.num);
+        const num = parseInt(btn.dataset.num, 10);
         inputNumber(num);
       });
     });
@@ -168,7 +167,7 @@
 
       // 数字入力
       if (e.key >= '1' && e.key <= '9') {
-        if (selected) inputNumber(parseInt(e.key));
+        if (selected) inputNumber(parseInt(e.key, 10));
         return;
       }
       if (e.key === '0' || e.key === 'Backspace' || e.key === 'Delete') {
@@ -384,8 +383,8 @@
     const cells = boardEl.querySelectorAll('td');
     cells.forEach((td) => {
       td.classList.remove('selected', 'highlighted', 'same-number');
-      const r = parseInt(td.dataset.row);
-      const c = parseInt(td.dataset.col);
+      const r = parseInt(td.dataset.row, 10);
+      const c = parseInt(td.dataset.col, 10);
 
       if (selected) {
         if (r === selected.row && c === selected.col) {

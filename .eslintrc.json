@@ -1,0 +1,60 @@
+{
+  "env": {
+    "node": true,
+    "browser": true,
+    "es2021": true,
+    "jest": true
+  },
+  "extends": ["airbnb-base"],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "func-names": "off",
+    "object-shorthand": "warn",
+    "prefer-template": "warn",
+    "no-plusplus": "off",
+    "no-param-reassign": "warn",
+    "no-restricted-syntax": "warn",
+    "global-require": "warn",
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }]
+  },
+  "overrides": [
+    {
+      "files": ["public/app.js"],
+      "rules": {
+        "no-undef": "off",
+        "prefer-arrow-callback": "off",
+        "no-use-before-define": "off",
+        "default-case": "off",
+        "no-lonely-if": "off",
+        "comma-dangle": "off",
+        "implicit-arrow-linebreak": "off",
+        "function-paren-newline": "off",
+        "no-useless-return": "off",
+        "no-restricted-globals": "off"
+      }
+    },
+    {
+      "files": ["src/sudoku.js"],
+      "rules": {
+        "operator-linebreak": "off",
+        "comma-dangle": "off"
+      }
+    },
+    {
+      "files": ["src/server.js"],
+      "rules": {
+        "consistent-return": "warn"
+      }
+    },
+    {
+      "files": ["*.test.js"],
+      "rules": {
+        "no-unused-vars": "off"
+      }
+    }
+  ]
+}

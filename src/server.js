@@ -17,6 +17,11 @@ app.get('/api/puzzle', (req, res) => {
   res.json(result);
 });
 
-app.listen(PORT, () => {
-  console.log(`ナンプレサーバー起動: http://localhost:${PORT}`);
-});
+// Only start server if this file is run directly (not imported for testing)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`ナンプレサーバー起動: http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
