@@ -54,6 +54,7 @@
         </ul>
         <h3>メモ機能</h3>
         <p>メモモードをONにすると、候補数字を小さくメモできます。メモの入力は「戻る」の対象外です。</p>`,
+      memoReset: 'メモ全消去',
       cookieMessage:
         'このサイトでは、広告の表示とアクセス解析のためにCookieを使用しています。詳しくは<a href="/privacy.html">プライバシーポリシー</a>をご覧ください。',
       cookieAccept: '同意する',
@@ -115,6 +116,7 @@
         </ul>
         <h3>Notes Mode</h3>
         <p>Turn on Notes mode to pencil in candidate numbers. Note entries are not tracked by undo.</p>`,
+      memoReset: 'Clear All Notes',
       cookieMessage:
         'This site uses cookies for advertising and analytics. See our <a href="/privacy.html">Privacy Policy</a> for details.',
       cookieAccept: 'Accept',
@@ -247,6 +249,7 @@
     setupDifficultyButtons();
     setupNumpad();
     setupMemoToggle();
+    setupMemoReset();
     setupUndoRedo();
     setupKeyboard();
     setupConfirmDialog();
@@ -364,7 +367,6 @@
     history = [
       {
         board: board.map((r) => [...r]),
-        memos: memos.map((r) => r.map((s) => new Set(s))),
       },
     ];
     historyIndex = 0;
@@ -433,6 +435,18 @@
   function updateMemoButtonText() {
     memoToggleBtn.innerHTML = memoMode ? t.memoOn : t.memoOff;
     memoToggleBtn.classList.toggle('active', memoMode);
+  }
+
+  // メモ全消去
+  function setupMemoReset() {
+    document.getElementById('memo-reset').addEventListener('click', resetAllMemos);
+  }
+
+  function resetAllMemos() {
+    if (!gameActive) return;
+    memos = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => new Set()));
+    renderBoard();
+    saveGameToStorage();
   }
 
   // Undo/Redo ボタン
@@ -558,15 +572,13 @@
     history = history.slice(0, historyIndex + 1);
     history.push({
       board: board.map((r) => [...r]),
-      memos: memos.map((r) => r.map((s) => new Set(s))),
     });
     historyIndex = history.length - 1;
   }
 
   function restoreState(state) {
     board = state.board.map((r) => [...r]);
-    memos = state.memos.map((r) => r.map((s) => new Set(s)));
-    // mistakesは復元しない（一度のミスは履歴で取り消さない）
+    // memos, mistakesは復元しない（undo対象外）
     renderBoard();
   }
 
