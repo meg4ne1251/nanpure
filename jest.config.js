@@ -1,11 +1,7 @@
 module.exports = {
   testEnvironment: 'node',
   testTimeout: 15000,
-  collectCoverageFrom: [
-    'src/**/*.js',
-    '!src/**/*.test.js',
-    '!**/node_modules/**',
-  ],
+  collectCoverageFrom: ['src/**/*.js', '!src/**/*.test.js', '!**/node_modules/**'],
   coverageThreshold: {
     global: {
       branches: 50,

@@ -5,6 +5,7 @@
 ## 機能
 
 ### ゲームプレイ
+
 - **3段階の難易度** - 初級（ヒント36〜40）・中級（ヒント28〜32）・上級（ヒント22〜26）
 - **ランダム生成** - 毎回異なるパズルを生成。唯一解を保証
 - **メモ機能** - 候補数字を小さく記録
@@ -14,11 +15,13 @@
 - **キーボード操作** - 矢印キー、WASD、Emacsキーバインド対応
 
 ### グローバル対応
+
 - **多言語対応** - 日本語（ja）と英語（en）に対応。ブラウザ言語設定で自動切り替え
 - **レスポンシブデザイン** - モバイル、タブレット、デスクトップ対応
 - **アクセシビリティ** - キーボードのみでプレイ可能、セマンティックHTML
 
 ### SEO & 収益化
+
 - **SEO最適化** - robots.txt、sitemap.xml、hreflang、構造化データ対応
 - **Google AdSense対応** - 広告スロット実装（ブラウザ言語に応じて自動配信）
 - **GDPR対応** - Cookie同意バナー、プライバシーポリシーページ
@@ -87,6 +90,7 @@ nanpure/
 パズルを生成して返します。
 
 **パラメータ:**
+
 - `difficulty` (required): `easy`, `medium`, `hard` のいずれか
 
 **レスポンス例:**
@@ -124,12 +128,10 @@ nanpure/
 <script id="adsense-script" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" async></script>
 
 <!-- Line 172, 174 (in-game ad) -->
-data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-data-ad-slot="XXXXXXXXXX"
+data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX"
 
 <!-- Line 233, 235 (footer ad) -->
-data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-data-ad-slot="XXXXXXXXXX"
+data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX"
 ```
 
 ### 2. OG イメージの作成
@@ -214,10 +216,10 @@ GitHub Actions により、以下の品質指標が自動チェックされま�
 
 ### サポート言語
 
-| 言語 | コード | 自動判定 |
-|---|---|---|
-| 日本語 | `ja` | `navigator.language.startsWith('ja')` |
-| 英語 | `en` | その他すべて |
+| 言語   | コード | 自動判定                              |
+| ------ | ------ | ------------------------------------- |
+| 日本語 | `ja`   | `navigator.language.startsWith('ja')` |
+| 英語   | `en`   | その他すべて                          |
 
 ### 翻訳の追加方法
 
@@ -225,8 +227,12 @@ GitHub Actions により、以下の品質指標が自動チェックされま�
 
 ```javascript
 const translations = {
-  ja: { /* 日本語 */ },
-  en: { /* 英語 */ },
+  ja: {
+    /* 日本語 */
+  },
+  en: {
+    /* 英語 */
+  },
   // 新しい言語を追加
   // fr: { /* フランス語 */ },
 };

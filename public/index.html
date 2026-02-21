@@ -1,262 +1,287 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ナンプレ - 無料で遊べるオンライン数独パズル | Free Sudoku Puzzle</title>
-  <meta name="description" content="ナンプレ（数独）を無料でオンラインプレイ。初級・中級・上級の3段階の難易度。毎回異なるランダムなパズルで何度でも楽しめます。Play free Sudoku puzzles online with 3 difficulty levels.">
-  <meta name="keywords" content="ナンプレ,数独,Sudoku,パズル,puzzle,無料,free,オンライン,online,脳トレ,brain training,ブラウザゲーム">
-  <meta name="robots" content="index, follow">
-  <meta name="author" content="nanpure.meg4ne.net">
-  <link rel="canonical" href="https://nanpure.meg4ne.net/">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ナンプレ - 無料で遊べるオンライン数独パズル | Free Sudoku Puzzle</title>
+    <meta
+      name="description"
+      content="ナンプレ（数独）を無料でオンラインプレイ。初級・中級・上級の3段階の難易度。毎回異なるランダムなパズルで何度でも楽しめます。Play free Sudoku puzzles online with 3 difficulty levels."
+    />
+    <meta
+      name="keywords"
+      content="ナンプレ,数独,Sudoku,パズル,puzzle,無料,free,オンライン,online,脳トレ,brain training,ブラウザゲーム"
+    />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="nanpure.meg4ne.net" />
+    <link rel="canonical" href="https://nanpure.meg4ne.net/" />
 
-  <!-- hreflang -->
-  <link rel="alternate" hreflang="ja" href="https://nanpure.meg4ne.net/">
-  <link rel="alternate" hreflang="en" href="https://nanpure.meg4ne.net/">
-  <link rel="alternate" hreflang="x-default" href="https://nanpure.meg4ne.net/">
+    <!-- hreflang -->
+    <link rel="alternate" hreflang="ja" href="https://nanpure.meg4ne.net/" />
+    <link rel="alternate" hreflang="en" href="https://nanpure.meg4ne.net/" />
+    <link rel="alternate" hreflang="x-default" href="https://nanpure.meg4ne.net/" />
 
-  <!-- Mobile -->
-  <meta name="theme-color" content="#1a365d">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Nanpure">
+    <!-- Mobile -->
+    <meta name="theme-color" content="#1a365d" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Nanpure" />
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="ナンプレ - 無料オンライン数独パズル | Free Sudoku">
-  <meta property="og:description" content="初級・中級・上級の3段階で遊べる無料ナンプレ。毎回ランダム生成で飽きない！Play free Sudoku online!">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://nanpure.meg4ne.net/">
-  <meta property="og:locale" content="ja_JP">
-  <meta property="og:locale:alternate" content="en_US">
-  <meta property="og:site_name" content="Nanpure">
-  <!-- TODO: og:image を実際の画像URLに置き換えてください -->
-  <meta property="og:image" content="https://nanpure.meg4ne.net/og-image.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
+    <!-- Open Graph -->
+    <meta property="og:title" content="ナンプレ - 無料オンライン数独パズル | Free Sudoku" />
+    <meta
+      property="og:description"
+      content="初級・中級・上級の3段階で遊べる無料ナンプレ。毎回ランダム生成で飽きない！Play free Sudoku online!"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://nanpure.meg4ne.net/" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:site_name" content="Nanpure" />
+    <!-- TODO: og:image を実際の画像URLに置き換えてください -->
+    <meta property="og:image" content="https://nanpure.meg4ne.net/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="ナンプレ - 無料オンライン数独パズル | Free Sudoku">
-  <meta name="twitter:description" content="初級・中級・上級の3段階で遊べる無料ナンプレ。毎回ランダム生成で飽きない！Play free Sudoku online!">
-  <meta name="twitter:image" content="https://nanpure.meg4ne.net/og-image.png">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ナンプレ - 無料オンライン数独パズル | Free Sudoku" />
+    <meta
+      name="twitter:description"
+      content="初級・中級・上級の3段階で遊べる無料ナンプレ。毎回ランダム生成で飽きない！Play free Sudoku online!"
+    />
+    <meta name="twitter:image" content="https://nanpure.meg4ne.net/og-image.png" />
 
-  <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
 
-  <!-- 構造化データ -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "ナンプレ (Nanpure)",
-    "alternateName": "Free Online Sudoku Puzzle",
-    "description": "無料で遊べるオンラインナンプレ（数独）パズル。3段階の難易度で毎回異なる問題を楽しめます。Play free Sudoku puzzles online with 3 difficulty levels.",
-    "url": "https://nanpure.meg4ne.net/",
-    "applicationCategory": "GameApplication",
-    "operatingSystem": "Web",
-    "inLanguage": ["ja", "en"],
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "JPY"
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.5",
-      "ratingCount": "1"
-    }
-  }
-  </script>
+    <!-- 構造化データ -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "ナンプレ (Nanpure)",
+        "alternateName": "Free Online Sudoku Puzzle",
+        "description": "無料で遊べるオンラインナンプレ（数独）パズル。3段階の難易度で毎回異なる問題を楽しめます。Play free Sudoku puzzles online with 3 difficulty levels.",
+        "url": "https://nanpure.meg4ne.net/",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Web",
+        "inLanguage": ["ja", "en"],
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "JPY"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.5",
+          "ratingCount": "1"
+        }
+      }
+    </script>
 
-  <!-- Google AdSense -->
-  <!-- TODO: ca-pub-XXXXXXXXXXXXXXXX を実際のパブリッシャーIDに置き換えてください -->
-  <script id="adsense-script" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" async></script>
-</head>
-<body>
-  <div id="app">
-    <header>
-      <h1 data-i18n="title">ナンプレ</h1>
-      <p class="subtitle" data-i18n="subtitle">無料オンライン数独パズル</p>
-    </header>
+    <!-- Google AdSense -->
+    <!-- TODO: ca-pub-XXXXXXXXXXXXXXXX を実際のパブリッシャーIDに置き換えてください -->
+    <script id="adsense-script" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" async></script>
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <h1 data-i18n="title">ナンプレ</h1>
+        <p class="subtitle" data-i18n="subtitle">無料オンライン数独パズル</p>
+      </header>
 
-    <!-- スタート画面 -->
-    <div id="start-screen">
-      <div class="start-content">
-        <h2 data-i18n="selectDifficulty">難易度を選んでスタート</h2>
-        <div id="start-difficulty-buttons">
-          <button class="start-diff-btn" data-diff="easy">
-            <span class="diff-label" data-i18n="easy">初級</span>
-            <span class="diff-desc" data-i18n="easyHints">ヒント 36〜40</span>
-          </button>
-          <button class="start-diff-btn active" data-diff="medium">
-            <span class="diff-label" data-i18n="medium">中級</span>
-            <span class="diff-desc" data-i18n="mediumHints">ヒント 28〜32</span>
-          </button>
-          <button class="start-diff-btn" data-diff="hard">
-            <span class="diff-label" data-i18n="hard">上級</span>
-            <span class="diff-desc" data-i18n="hardHints">ヒント 22〜26</span>
-          </button>
+      <!-- スタート画面 -->
+      <div id="start-screen">
+        <div class="start-content">
+          <h2 data-i18n="selectDifficulty">難易度を選んでスタート</h2>
+          <div id="start-difficulty-buttons">
+            <button class="start-diff-btn" data-diff="easy">
+              <span class="diff-label" data-i18n="easy">初級</span>
+              <span class="diff-desc" data-i18n="easyHints">ヒント 36〜40</span>
+            </button>
+            <button class="start-diff-btn active" data-diff="medium">
+              <span class="diff-label" data-i18n="medium">中級</span>
+              <span class="diff-desc" data-i18n="mediumHints">ヒント 28〜32</span>
+            </button>
+            <button class="start-diff-btn" data-diff="hard">
+              <span class="diff-label" data-i18n="hard">上級</span>
+              <span class="diff-desc" data-i18n="hardHints">ヒント 22〜26</span>
+            </button>
+          </div>
+          <button id="start-game" data-i18n="startGame">ゲームスタート</button>
         </div>
-        <button id="start-game" data-i18n="startGame">ゲームスタート</button>
+
+        <!-- ルール・遊び方 -->
+        <details class="rules-section">
+          <summary data-i18n="rulesTitle">ルール・遊び方</summary>
+          <div class="rules-content" data-i18n-html="rulesContent">
+            <h3>基本ルール</h3>
+            <ul>
+              <li>9×9のマスに1〜9の数字を埋めます</li>
+              <li><strong>横一列</strong>（行）に1〜9が一つずつ入ります</li>
+              <li><strong>縦一列</strong>（列）に1〜9が一つずつ入ります</li>
+              <li><strong>太線で囲まれた3×3のブロック</strong>に1〜9が一つずつ入ります</li>
+            </ul>
+            <h3>操作方法</h3>
+            <ul>
+              <li><strong>セル選択:</strong> クリック / 矢印キー / WASD</li>
+              <li><strong>数字入力:</strong> 数字キー(1-9) / 画面の数字ボタン</li>
+              <li><strong>消去:</strong> 0 / Backspace / Delete / 消ボタン</li>
+              <li><strong>メモモード切替:</strong> Mキー</li>
+              <li><strong>元に戻す:</strong> Ctrl+Z</li>
+              <li><strong>やり直し:</strong> Ctrl+Y / Ctrl+Shift+Z</li>
+            </ul>
+            <h3>メモ機能</h3>
+            <p>
+              メモモードをONにすると、候補数字を小さくメモできます。確定する数字が見つかったらメモモードをOFFにして入力しましょう。
+            </p>
+          </div>
+        </details>
       </div>
 
-      <!-- ルール・遊び方 -->
-      <details class="rules-section">
-        <summary data-i18n="rulesTitle">ルール・遊び方</summary>
-        <div class="rules-content" data-i18n-html="rulesContent">
-          <h3>基本ルール</h3>
-          <ul>
-            <li>9×9のマスに1〜9の数字を埋めます</li>
-            <li><strong>横一列</strong>（行）に1〜9が一つずつ入ります</li>
-            <li><strong>縦一列</strong>（列）に1〜9が一つずつ入ります</li>
-            <li><strong>太線で囲まれた3×3のブロック</strong>に1〜9が一つずつ入ります</li>
-          </ul>
-          <h3>操作方法</h3>
-          <ul>
-            <li><strong>セル選択:</strong> クリック / 矢印キー / WASD</li>
-            <li><strong>数字入力:</strong> 数字キー(1-9) / 画面の数字ボタン</li>
-            <li><strong>消去:</strong> 0 / Backspace / Delete / 消ボタン</li>
-            <li><strong>メモモード切替:</strong> Mキー</li>
-            <li><strong>元に戻す:</strong> Ctrl+Z</li>
-            <li><strong>やり直し:</strong> Ctrl+Y / Ctrl+Shift+Z</li>
-          </ul>
-          <h3>メモ機能</h3>
-          <p>メモモードをONにすると、候補数字を小さくメモできます。確定する数字が見つかったらメモモードをOFFにして入力しましょう。</p>
+      <!-- ゲーム画面 -->
+      <div id="game-screen" class="hidden">
+        <div id="controls">
+          <div id="difficulty-buttons">
+            <button class="diff-btn" data-diff="easy" data-i18n="easy">初級</button>
+            <button class="diff-btn active" data-diff="medium" data-i18n="medium">中級</button>
+            <button class="diff-btn" data-diff="hard" data-i18n="hard">上級</button>
+          </div>
+          <button id="new-game" data-i18n="newGame">新しいゲーム</button>
         </div>
-      </details>
-    </div>
 
-    <!-- ゲーム画面 -->
-    <div id="game-screen" class="hidden">
-      <div id="controls">
-        <div id="difficulty-buttons">
-          <button class="diff-btn" data-diff="easy" data-i18n="easy">初級</button>
-          <button class="diff-btn active" data-diff="medium" data-i18n="medium">中級</button>
-          <button class="diff-btn" data-diff="hard" data-i18n="hard">上級</button>
+        <div id="game-info">
+          <span id="timer">00:00</span>
+          <span id="mistakes" data-i18n-prefix="mistakes">ミス: 0</span>
         </div>
-        <button id="new-game" data-i18n="newGame">新しいゲーム</button>
-      </div>
 
-      <div id="game-info">
-        <span id="timer">00:00</span>
-        <span id="mistakes" data-i18n-prefix="mistakes">ミス: 0</span>
-      </div>
-
-      <div id="board-container">
-        <table id="board"></table>
-        <div id="loading" class="hidden" data-i18n="loading">生成中...</div>
-      </div>
-
-      <!-- 広告枠: ボードとnumpadの間 -->
-      <div class="ad-container ad-in-game">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="XXXXXXXXXX"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-      </div>
-
-      <div id="numpad">
-        <button class="num-btn" data-num="1">1</button>
-        <button class="num-btn" data-num="2">2</button>
-        <button class="num-btn" data-num="3">3</button>
-        <button class="num-btn" data-num="4">4</button>
-        <button class="num-btn" data-num="5">5</button>
-        <button class="num-btn" data-num="6">6</button>
-        <button class="num-btn" data-num="7">7</button>
-        <button class="num-btn" data-num="8">8</button>
-        <button class="num-btn" data-num="9">9</button>
-        <button class="num-btn erase-btn" data-num="0" data-i18n="erase">消</button>
-      </div>
-
-      <div id="action-buttons">
-        <button id="memo-toggle" data-i18n-html="memoOff">メモモード: OFF <kbd>M</kbd></button>
-        <button id="undo-btn" data-i18n-html="undo">戻る <kbd>Ctrl+Z</kbd></button>
-        <button id="redo-btn" data-i18n-html="redo">進む <kbd>Ctrl+Y</kbd></button>
-      </div>
-
-      <!-- ゲーム中のルール表示 -->
-      <details class="rules-section rules-in-game">
-        <summary data-i18n="rulesTitle">ルール・遊び方</summary>
-        <div class="rules-content" data-i18n-html="rulesContent">
-          <h3>基本ルール</h3>
-          <ul>
-            <li>9×9のマスに1〜9の数字を埋めます</li>
-            <li><strong>横一列</strong>（行）に1〜9が一つずつ入ります</li>
-            <li><strong>縦一列</strong>（列）に1〜9が一つずつ入ります</li>
-            <li><strong>太線で囲まれた3×3のブロック</strong>に1〜9が一つずつ入ります</li>
-          </ul>
-          <h3>操作方法</h3>
-          <ul>
-            <li><strong>セル選択:</strong> クリック / 矢印キー / WASD</li>
-            <li><strong>数字入力:</strong> 数字キー(1-9) / 画面の数字ボタン</li>
-            <li><strong>消去:</strong> 0 / Backspace / Delete / 消ボタン</li>
-            <li><strong>メモモード切替:</strong> Mキー</li>
-            <li><strong>元に戻す:</strong> Ctrl+Z</li>
-            <li><strong>やり直し:</strong> Ctrl+Y / Ctrl+Shift+Z</li>
-          </ul>
+        <div id="board-container">
+          <table id="board"></table>
+          <div id="loading" class="hidden" data-i18n="loading">生成中...</div>
         </div>
-      </details>
-    </div>
 
-    <!-- 確認ダイアログ -->
-    <div id="confirm-modal" class="modal-overlay hidden">
-      <div class="modal-content">
-        <h2 data-i18n="confirm">確認</h2>
-        <p data-i18n="confirmMessage">現在のゲームを中断して新しいゲームを始めますか？</p>
-        <div class="modal-buttons">
-          <button id="confirm-yes" class="btn-primary" data-i18n="yes">はい</button>
-          <button id="confirm-no" class="btn-secondary" data-i18n="no">いいえ</button>
+        <!-- 広告枠: ボードとnumpadの間 -->
+        <div class="ad-container ad-in-game">
+          <ins
+            class="adsbygoogle"
+            style="display: block"
+            data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+            data-ad-slot="XXXXXXXXXX"
+            data-ad-format="auto"
+            data-full-width-responsive="true"
+          ></ins>
+        </div>
+
+        <div id="numpad">
+          <button class="num-btn" data-num="1">1</button>
+          <button class="num-btn" data-num="2">2</button>
+          <button class="num-btn" data-num="3">3</button>
+          <button class="num-btn" data-num="4">4</button>
+          <button class="num-btn" data-num="5">5</button>
+          <button class="num-btn" data-num="6">6</button>
+          <button class="num-btn" data-num="7">7</button>
+          <button class="num-btn" data-num="8">8</button>
+          <button class="num-btn" data-num="9">9</button>
+          <button class="num-btn erase-btn" data-num="0" data-i18n="erase">消</button>
+        </div>
+
+        <div id="action-buttons">
+          <button id="memo-toggle" data-i18n-html="memoOff">メモモード: OFF <kbd>M</kbd></button>
+          <button id="undo-btn" data-i18n-html="undo">戻る <kbd>Ctrl+Z</kbd></button>
+          <button id="redo-btn" data-i18n-html="redo">進む <kbd>Ctrl+Y</kbd></button>
+        </div>
+
+        <!-- ゲーム中のルール表示 -->
+        <details class="rules-section rules-in-game">
+          <summary data-i18n="rulesTitle">ルール・遊び方</summary>
+          <div class="rules-content" data-i18n-html="rulesContent">
+            <h3>基本ルール</h3>
+            <ul>
+              <li>9×9のマスに1〜9の数字を埋めます</li>
+              <li><strong>横一列</strong>（行）に1〜9が一つずつ入ります</li>
+              <li><strong>縦一列</strong>（列）に1〜9が一つずつ入ります</li>
+              <li><strong>太線で囲まれた3×3のブロック</strong>に1〜9が一つずつ入ります</li>
+            </ul>
+            <h3>操作方法</h3>
+            <ul>
+              <li><strong>セル選択:</strong> クリック / 矢印キー / WASD</li>
+              <li><strong>数字入力:</strong> 数字キー(1-9) / 画面の数字ボタン</li>
+              <li><strong>消去:</strong> 0 / Backspace / Delete / 消ボタン</li>
+              <li><strong>メモモード切替:</strong> Mキー</li>
+              <li><strong>元に戻す:</strong> Ctrl+Z</li>
+              <li><strong>やり直し:</strong> Ctrl+Y / Ctrl+Shift+Z</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+
+      <!-- 確認ダイアログ -->
+      <div id="confirm-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+          <h2 data-i18n="confirm">確認</h2>
+          <p data-i18n="confirmMessage">現在のゲームを中断して新しいゲームを始めますか？</p>
+          <div class="modal-buttons">
+            <button id="confirm-yes" class="btn-primary" data-i18n="yes">はい</button>
+            <button id="confirm-no" class="btn-secondary" data-i18n="no">いいえ</button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- クリアモーダル -->
-    <div id="complete-modal" class="modal-overlay hidden">
-      <div class="modal-content">
-        <h2 data-i18n="cleared">クリア！</h2>
-        <p id="complete-difficulty"></p>
-        <p id="complete-time"></p>
-        <p id="complete-mistakes"></p>
-        <div class="modal-buttons">
-          <button id="share-x" class="btn-share" data-i18n="shareX">X でシェア</button>
-          <button id="share-copy" class="btn-share btn-share-copy" data-i18n="copyResult">結果をコピー</button>
+      <!-- クリアモーダル -->
+      <div id="complete-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+          <h2 data-i18n="cleared">クリア！</h2>
+          <p id="complete-difficulty"></p>
+          <p id="complete-time"></p>
+          <p id="complete-mistakes"></p>
+          <div class="modal-buttons">
+            <button id="share-x" class="btn-share" data-i18n="shareX">X でシェア</button>
+            <button id="share-copy" class="btn-share btn-share-copy" data-i18n="copyResult">
+              結果をコピー
+            </button>
+          </div>
+          <button id="play-again" class="btn-primary" data-i18n="playAgain">もう一度プレイ</button>
         </div>
-        <button id="play-again" class="btn-primary" data-i18n="playAgain">もう一度プレイ</button>
+      </div>
+
+      <!-- Cookie同意バナー -->
+      <div id="cookie-consent" class="cookie-consent hidden">
+        <div class="cookie-consent-content">
+          <p data-i18n-html="cookieMessage">
+            このサイトでは、広告の表示とアクセス解析のためにCookieを使用しています。詳しくは<a
+              href="/privacy.html"
+              >プライバシーポリシー</a
+            >をご覧ください。
+          </p>
+          <button id="cookie-accept" class="btn-primary" data-i18n="cookieAccept">同意する</button>
+        </div>
       </div>
     </div>
 
-    <!-- Cookie同意バナー -->
-    <div id="cookie-consent" class="cookie-consent hidden">
-      <div class="cookie-consent-content">
-        <p data-i18n-html="cookieMessage">このサイトでは、広告の表示とアクセス解析のためにCookieを使用しています。詳しくは<a href="/privacy.html">プライバシーポリシー</a>をご覧ください。</p>
-        <button id="cookie-accept" class="btn-primary" data-i18n="cookieAccept">同意する</button>
+    <footer>
+      <!-- 広告枠: フッター上部 -->
+      <div class="ad-container ad-footer">
+        <ins
+          class="adsbygoogle"
+          style="display: block"
+          data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+          data-ad-slot="XXXXXXXXXX"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        ></ins>
       </div>
-    </div>
-  </div>
+      <p>&copy; 2026 <span data-i18n="footerName">ナンプレ - 無料オンライン数独パズル</span></p>
+      <p><a href="/privacy.html" data-i18n="privacyPolicy">プライバシーポリシー</a></p>
+    </footer>
 
-  <footer>
-    <!-- 広告枠: フッター上部 -->
-    <div class="ad-container ad-footer">
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-           data-ad-slot="XXXXXXXXXX"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-    </div>
-    <p>&copy; 2026 <span data-i18n="footerName">ナンプレ - 無料オンライン数独パズル</span></p>
-    <p><a href="/privacy.html" data-i18n="privacyPolicy">プライバシーポリシー</a></p>
-  </footer>
+    <noscript>
+      <div style="text-align: center; padding: 40px">
+        <h1>ナンプレ / Nanpure Sudoku</h1>
+        <p>このゲームにはJavaScriptが必要です。ブラウザの設定でJavaScriptを有効にしてください。</p>
+        <p>This game requires JavaScript. Please enable JavaScript in your browser settings.</p>
+      </div>
+    </noscript>
 
-  <noscript>
-    <div style="text-align:center;padding:40px;">
-      <h1>ナンプレ / Nanpure Sudoku</h1>
-      <p>このゲームにはJavaScriptが必要です。ブラウザの設定でJavaScriptを有効にしてください。</p>
-      <p>This game requires JavaScript. Please enable JavaScript in your browser settings.</p>
-    </div>
-  </noscript>
-
-  <script src="app.js"></script>
-</body>
+    <script src="app.js"></script>
+  </body>
 </html>
