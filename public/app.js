@@ -126,9 +126,8 @@
   };
 
   // === 言語管理 ===
-  let currentLang =
-    localStorage.getItem('nanpure-lang') ||
-    ((navigator.language || navigator.userLanguage || 'ja').startsWith('ja') ? 'ja' : 'en');
+  let currentLang = localStorage.getItem('nanpure-lang')
+    || ((navigator.language || navigator.userLanguage || 'ja').startsWith('ja') ? 'ja' : 'en');
   let t = translations[currentLang];
   document.documentElement.lang = currentLang;
 
