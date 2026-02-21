@@ -12,13 +12,14 @@
       mediumHints: 'ヒント 28〜32',
       hardHints: 'ヒント 22〜26',
       startGame: 'ゲームスタート',
+      resumeGame: '続きをプレイ',
       newGame: '新しいゲーム',
       loading: '生成中...',
-      erase: '消',
-      memoOn: 'メモモード: ON <kbd>M</kbd>',
-      memoOff: 'メモモード: OFF <kbd>M</kbd>',
-      undo: '戻る <kbd>Ctrl+Z</kbd>',
-      redo: '進む <kbd>Ctrl+Y</kbd>',
+      erase: '消去',
+      memoOn: 'メモ: ON <kbd>M</kbd>',
+      memoOff: 'メモ: OFF <kbd>M</kbd>',
+      undo: '↩ 戻る',
+      redo: '↪ 進む',
       confirm: '確認',
       confirmMessage: '現在のゲームを中断して新しいゲームを始めますか？',
       yes: 'はい',
@@ -46,13 +47,13 @@
         <ul>
           <li><strong>セル選択:</strong> クリック / 矢印キー / WASD</li>
           <li><strong>数字入力:</strong> 数字キー(1-9) / 画面の数字ボタン</li>
-          <li><strong>消去:</strong> 0 / Backspace / Delete / 消ボタン</li>
+          <li><strong>消去:</strong> 0 / Backspace / Delete / 消去ボタン</li>
           <li><strong>メモモード切替:</strong> Mキー</li>
           <li><strong>元に戻す:</strong> Ctrl+Z</li>
           <li><strong>やり直し:</strong> Ctrl+Y / Ctrl+Shift+Z</li>
         </ul>
         <h3>メモ機能</h3>
-        <p>メモモードをONにすると、候補数字を小さくメモできます。確定する数字が見つかったらメモモードをOFFにして入力しましょう。</p>`,
+        <p>メモモードをONにすると、候補数字を小さくメモできます。メモの入力は「戻る」の対象外です。</p>`,
       cookieMessage:
         'このサイトでは、広告の表示とアクセス解析のためにCookieを使用しています。詳しくは<a href="/privacy.html">プライバシーポリシー</a>をご覧ください。',
       cookieAccept: '同意する',
@@ -72,13 +73,14 @@
       mediumHints: 'Hints 28-32',
       hardHints: 'Hints 22-26',
       startGame: 'Start Game',
+      resumeGame: 'Resume Game',
       newGame: 'New Game',
       loading: 'Generating...',
-      erase: 'Del',
+      erase: 'Erase',
       memoOn: 'Notes: ON <kbd>M</kbd>',
       memoOff: 'Notes: OFF <kbd>M</kbd>',
-      undo: 'Undo <kbd>Ctrl+Z</kbd>',
-      redo: 'Redo <kbd>Ctrl+Y</kbd>',
+      undo: '↩ Undo',
+      redo: '↪ Redo',
       confirm: 'Confirm',
       confirmMessage: 'Abandon current game and start a new one?',
       yes: 'Yes',
@@ -106,13 +108,13 @@
         <ul>
           <li><strong>Select cell:</strong> Click / Arrow keys / WASD</li>
           <li><strong>Enter number:</strong> Number keys (1-9) / On-screen buttons</li>
-          <li><strong>Erase:</strong> 0 / Backspace / Delete / Del button</li>
+          <li><strong>Erase:</strong> 0 / Backspace / Delete / Erase button</li>
           <li><strong>Toggle notes:</strong> M key</li>
           <li><strong>Undo:</strong> Ctrl+Z</li>
           <li><strong>Redo:</strong> Ctrl+Y / Ctrl+Shift+Z</li>
         </ul>
         <h3>Notes Mode</h3>
-        <p>Turn on Notes mode to pencil in candidate numbers. When you find the correct number, turn off Notes mode and enter it.</p>`,
+        <p>Turn on Notes mode to pencil in candidate numbers. Note entries are not tracked by undo.</p>`,
       cookieMessage:
         'This site uses cookies for advertising and analytics. See our <a href="/privacy.html">Privacy Policy</a> for details.',
       cookieAccept: 'Accept',
@@ -123,31 +125,47 @@
     },
   };
 
-  // 言語判定
-  const userLang = navigator.language || navigator.userLanguage || 'ja';
-  const lang = userLang.startsWith('ja') ? 'ja' : 'en';
-  const t = translations[lang];
+  // === 言語管理 ===
+  let currentLang =
+    localStorage.getItem('nanpure-lang') ||
+    ((navigator.language || navigator.userLanguage || 'ja').startsWith('ja') ? 'ja' : 'en');
+  let t = translations[currentLang];
+  document.documentElement.lang = currentLang;
 
-  // HTML lang属性を設定
-  document.documentElement.lang = lang;
-
-  // i18n適用
   function applyTranslations() {
     document.querySelectorAll('[data-i18n]').forEach((el) => {
       const key = el.getAttribute('data-i18n');
-      if (t[key] !== undefined) {
-        el.textContent = t[key];
-      }
+      if (t[key] !== undefined) el.textContent = t[key];
     });
     document.querySelectorAll('[data-i18n-html]').forEach((el) => {
       const key = el.getAttribute('data-i18n-html');
-      if (t[key] !== undefined) {
-        el.innerHTML = t[key];
-      }
+      if (t[key] !== undefined) el.innerHTML = t[key];
     });
   }
 
-  // 状態
+  function toggleLanguage() {
+    currentLang = currentLang === 'ja' ? 'en' : 'ja';
+    localStorage.setItem('nanpure-lang', currentLang);
+    t = translations[currentLang];
+    document.documentElement.lang = currentLang;
+    applyTranslations();
+    updateLangButton();
+    updateMemoButtonText();
+    updateMistakes();
+  }
+
+  function updateLangButton() {
+    const btn = document.getElementById('lang-toggle');
+    if (btn) {
+      btn.textContent = currentLang === 'ja' ? 'EN' : 'JP';
+    }
+  }
+
+  function getDifficultyLabel(diff) {
+    return t[diff] || diff;
+  }
+
+  // === 状態 ===
   let puzzle = [];
   let solution = [];
   let board = [];
@@ -178,15 +196,47 @@
   const completeDifficulty = document.getElementById('complete-difficulty');
   const confirmModal = document.getElementById('confirm-modal');
 
-  const DIFFICULTY_LABELS = {
-    easy: t.easy,
-    medium: t.medium,
-    hard: t.hard,
-  };
+  // === ゲーム永続化 ===
+  function saveGameToStorage() {
+    if (!gameActive) return;
+    try {
+      const data = {
+        puzzle,
+        solution,
+        board,
+        memos: memos.map((r) => r.map((s) => [...s])),
+        mistakes,
+        seconds,
+        difficulty,
+      };
+      localStorage.setItem('nanpure-game', JSON.stringify(data));
+    } catch (e) {
+      // ストレージエラーは無視
+    }
+  }
+
+  function loadGameFromStorage() {
+    try {
+      const raw = localStorage.getItem('nanpure-game');
+      if (!raw) return null;
+      const data = JSON.parse(raw);
+      if (!data.puzzle || !data.solution || !data.board || !data.memos) return null;
+      data.memos = data.memos.map((r) => r.map((s) => new Set(s)));
+      return data;
+    } catch {
+      return null;
+    }
+  }
+
+  function clearGameStorage() {
+    localStorage.removeItem('nanpure-game');
+  }
 
   // 初期化
   function init() {
     applyTranslations();
+    updateLangButton();
+    setupLangToggle();
     setupCookieConsent();
     setupStartScreen();
     setupDifficultyButtons();
@@ -202,6 +252,19 @@
       completeModal.classList.add('hidden');
       startNewGame();
     });
+
+    // 保存済みゲームがあれば続きボタンを表示
+    const savedGame = loadGameFromStorage();
+    if (savedGame) {
+      const resumeBtn = document.getElementById('resume-game');
+      if (resumeBtn) resumeBtn.classList.remove('hidden');
+    }
+  }
+
+  // === 言語トグル ===
+  function setupLangToggle() {
+    const btn = document.getElementById('lang-toggle');
+    if (btn) btn.addEventListener('click', toggleLanguage);
   }
 
   // === Cookie同意 & AdSense ===
@@ -227,7 +290,6 @@
     if (script && !script.src) {
       script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
     }
-    // 広告スロットを初期化
     try {
       document.querySelectorAll('.adsbygoogle').forEach(() => {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
@@ -237,7 +299,7 @@
     }
   }
 
-  // スタート画面
+  // === スタート画面 ===
   function setupStartScreen() {
     document.querySelectorAll('.start-diff-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -253,6 +315,18 @@
       gameScreen.classList.remove('hidden');
       startNewGame();
     });
+
+    const resumeBtn = document.getElementById('resume-game');
+    if (resumeBtn) {
+      resumeBtn.addEventListener('click', () => {
+        const savedData = loadGameFromStorage();
+        if (savedData) {
+          startScreen.classList.add('hidden');
+          gameScreen.classList.remove('hidden');
+          resumeSavedGame(savedData);
+        }
+      });
+    }
   }
 
   function syncDifficultyButtons() {
@@ -262,6 +336,44 @@
     document.querySelectorAll('.start-diff-btn').forEach((b) => {
       b.classList.toggle('active', b.dataset.diff === difficulty);
     });
+  }
+
+  // === 保存済みゲームの復元 ===
+  function resumeSavedGame(savedData) {
+    puzzle = savedData.puzzle;
+    solution = savedData.solution;
+    board = savedData.board;
+    memos = savedData.memos;
+    mistakes = savedData.mistakes;
+    seconds = savedData.seconds || 0;
+    difficulty = savedData.difficulty || 'medium';
+    memoMode = false;
+    selected = null;
+
+    syncDifficultyButtons();
+    updateMemoButtonText();
+    updateMistakes();
+    updateTimer();
+
+    // 復元時は現在の状態を初期履歴として設定（undoは効かない）
+    history = [
+      {
+        board: board.map((r) => [...r]),
+        memos: memos.map((r) => r.map((s) => new Set(s))),
+        mistakes,
+      },
+    ];
+    historyIndex = 0;
+
+    renderBoard();
+    gameActive = true;
+
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      seconds++;
+      updateTimer();
+      if (seconds % 30 === 0) saveGameToStorage();
+    }, 1000);
   }
 
   // 難易度ボタン（ゲーム画面内）
@@ -436,14 +548,14 @@
   }
 
   // === Undo/Redo ===
-  function saveState() {
-    const state = {
+  // 変更を適用した「後」に状態をプッシュする
+  function pushState() {
+    history = history.slice(0, historyIndex + 1);
+    history.push({
       board: board.map((r) => [...r]),
       memos: memos.map((r) => r.map((s) => new Set(s))),
       mistakes,
-    };
-    history = history.slice(0, historyIndex + 1);
-    history.push(state);
+    });
     historyIndex = history.length - 1;
   }
 
@@ -459,27 +571,30 @@
     if (historyIndex <= 0) return;
     historyIndex--;
     restoreState(history[historyIndex]);
+    saveGameToStorage();
   }
 
   function redo() {
     if (historyIndex >= history.length - 1) return;
     historyIndex++;
     restoreState(history[historyIndex]);
+    saveGameToStorage();
   }
 
-  // 新しいゲーム開始
+  // === 新しいゲーム開始 ===
   async function startNewGame() {
+    clearGameStorage();
     loadingEl.classList.remove('hidden');
     gameActive = false;
     selected = null;
     mistakes = 0;
     seconds = 0;
     memoMode = false;
+    history = [];
+    historyIndex = -1;
     updateMemoButtonText();
     updateTimer();
     updateMistakes();
-    history = [];
-    historyIndex = -1;
 
     if (timerInterval) clearInterval(timerInterval);
 
@@ -491,13 +606,24 @@
       board = puzzle.map((row) => [...row]);
       memos = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => new Set()));
 
-      saveState();
+      // 初期状態を履歴の先頭として保存
+      history = [
+        {
+          board: board.map((r) => [...r]),
+          memos: memos.map((r) => r.map((s) => new Set(s))),
+          mistakes: 0,
+        },
+      ];
+      historyIndex = 0;
 
       renderBoard();
       gameActive = true;
+      saveGameToStorage();
+
       timerInterval = setInterval(() => {
         seconds++;
         updateTimer();
+        if (seconds % 30 === 0) saveGameToStorage();
       }, 1000);
     } catch (err) {
       console.error('Puzzle fetch error:', err);
@@ -506,7 +632,7 @@
     }
   }
 
-  // 盤面描画
+  // === 盤面描画 ===
   function renderBoard() {
     boardEl.innerHTML = '';
     for (let r = 0; r < 9; r++) {
@@ -580,40 +706,45 @@
     });
   }
 
-  // 数字入力
+  // === 数字入力 ===
   function inputNumber(num) {
     if (!selected) return;
     const { row, col } = selected;
 
     if (puzzle[row][col] !== 0) return;
 
-    saveState();
-
     if (memoMode && num !== 0) {
+      // メモモード: 直接適用、undo履歴には記録しない
       if (memos[row][col].has(num)) {
         memos[row][col].delete(num);
       } else {
         memos[row][col].add(num);
       }
       board[row][col] = 0;
-    } else {
-      if (num === 0) {
-        board[row][col] = 0;
-        memos[row][col].clear();
-      } else {
-        board[row][col] = num;
-        memos[row][col].clear();
+      renderBoard();
+      saveGameToStorage();
+      return;
+    }
 
-        if (num !== solution[row][col]) {
-          mistakes++;
-          updateMistakes();
-        } else {
-          clearMemosRelated(row, col, num);
-        }
+    // 通常入力: 変更を適用してからpushState
+    if (num === 0) {
+      board[row][col] = 0;
+      memos[row][col].clear();
+    } else {
+      board[row][col] = num;
+      memos[row][col].clear();
+
+      if (num !== solution[row][col]) {
+        mistakes++;
+        updateMistakes();
+      } else {
+        clearMemosRelated(row, col, num);
       }
     }
 
+    pushState();
     renderBoard();
+    saveGameToStorage();
     checkCompletion();
   }
 
@@ -656,8 +787,9 @@
 
     gameActive = false;
     if (timerInterval) clearInterval(timerInterval);
+    clearGameStorage();
 
-    completeDifficulty.textContent = `${t.difficultyLabel}: ${DIFFICULTY_LABELS[difficulty]}`;
+    completeDifficulty.textContent = `${t.difficultyLabel}: ${getDifficultyLabel(difficulty)}`;
     completeTime.textContent = `${t.timeLabel}: ${formatTime(seconds)}`;
     completeMistakes.textContent = `${t.mistakesLabel}: ${mistakes}${t.mistakesCount}`;
     completeModal.classList.remove('hidden');
@@ -670,7 +802,7 @@
   }
 
   function getShareText() {
-    const diffLabel = DIFFICULTY_LABELS[difficulty];
+    const diffLabel = getDifficultyLabel(difficulty);
     const time = formatTime(seconds);
     return t.shareText(diffLabel, time, mistakes);
   }

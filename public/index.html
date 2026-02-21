@@ -22,7 +22,7 @@
     <link rel="alternate" hreflang="x-default" href="https://nanpure.meg4ne.net/" />
 
     <!-- Mobile -->
-    <meta name="theme-color" content="#1a365d" />
+    <meta name="theme-color" content="#1a1a1a" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Nanpure" />
@@ -38,7 +38,6 @@
     <meta property="og:locale" content="ja_JP" />
     <meta property="og:locale:alternate" content="en_US" />
     <meta property="og:site_name" content="Nanpure" />
-    <!-- TODO: og:image を実際の画像URLに置き換えてください -->
     <meta property="og:image" content="https://nanpure.meg4ne.net/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -86,7 +85,10 @@
   <body>
     <div id="app">
       <header>
-        <h1 data-i18n="title">ナンプレ</h1>
+        <div class="header-title-row">
+          <h1 data-i18n="title">ナンプレ</h1>
+          <button id="lang-toggle" class="lang-btn">EN</button>
+        </div>
         <p class="subtitle" data-i18n="subtitle">無料オンライン数独パズル</p>
       </header>
 
@@ -108,7 +110,10 @@
               <span class="diff-desc" data-i18n="hardHints">ヒント 22〜26</span>
             </button>
           </div>
-          <button id="start-game" data-i18n="startGame">ゲームスタート</button>
+          <div class="start-actions">
+            <button id="start-game" data-i18n="startGame">ゲームスタート</button>
+            <button id="resume-game" class="hidden" data-i18n="resumeGame">続きをプレイ</button>
+          </div>
         </div>
 
         <!-- ルール・遊び方 -->
@@ -126,7 +131,7 @@
             <ul>
               <li><strong>セル選択:</strong> クリック / 矢印キー / WASD</li>
               <li><strong>数字入力:</strong> 数字キー(1-9) / 画面の数字ボタン</li>
-              <li><strong>消去:</strong> 0 / Backspace / Delete / 消ボタン</li>
+              <li><strong>消去:</strong> 0 / Backspace / Delete / 消去ボタン</li>
               <li><strong>メモモード切替:</strong> Mキー</li>
               <li><strong>元に戻す:</strong> Ctrl+Z</li>
               <li><strong>やり直し:</strong> Ctrl+Y / Ctrl+Shift+Z</li>
@@ -152,7 +157,7 @@
 
         <div id="game-info">
           <span id="timer">00:00</span>
-          <span id="mistakes" data-i18n-prefix="mistakes">ミス: 0</span>
+          <span id="mistakes">ミス: 0</span>
         </div>
 
         <div id="board-container">
@@ -182,13 +187,13 @@
           <button class="num-btn" data-num="7">7</button>
           <button class="num-btn" data-num="8">8</button>
           <button class="num-btn" data-num="9">9</button>
-          <button class="num-btn erase-btn" data-num="0" data-i18n="erase">消</button>
+          <button class="num-btn erase-btn" data-num="0" data-i18n="erase">消去</button>
         </div>
 
         <div id="action-buttons">
-          <button id="memo-toggle" data-i18n-html="memoOff">メモモード: OFF <kbd>M</kbd></button>
-          <button id="undo-btn" data-i18n-html="undo">戻る <kbd>Ctrl+Z</kbd></button>
-          <button id="redo-btn" data-i18n-html="redo">進む <kbd>Ctrl+Y</kbd></button>
+          <button id="memo-toggle" data-i18n-html="memoOff">メモ: OFF <kbd>M</kbd></button>
+          <button id="undo-btn" data-i18n-html="undo">↩ 戻る</button>
+          <button id="redo-btn" data-i18n-html="redo">↪ 進む</button>
         </div>
 
         <!-- ゲーム中のルール表示 -->
@@ -206,7 +211,7 @@
             <ul>
               <li><strong>セル選択:</strong> クリック / 矢印キー / WASD</li>
               <li><strong>数字入力:</strong> 数字キー(1-9) / 画面の数字ボタン</li>
-              <li><strong>消去:</strong> 0 / Backspace / Delete / 消ボタン</li>
+              <li><strong>消去:</strong> 0 / Backspace / Delete / 消去ボタン</li>
               <li><strong>メモモード切替:</strong> Mキー</li>
               <li><strong>元に戻す:</strong> Ctrl+Z</li>
               <li><strong>やり直し:</strong> Ctrl+Y / Ctrl+Shift+Z</li>

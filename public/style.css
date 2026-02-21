@@ -6,37 +6,70 @@
 
 body {
   font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
-  background: #f0f4f8;
+  background: #f5f3ee;
+  color: #1a1a1a;
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  padding: 20px;
+  padding: 20px 16px;
 }
 
 #app {
-  max-width: 500px;
+  max-width: 480px;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
 }
 
+/* ヘッダー */
 header {
+  width: 100%;
   text-align: center;
+}
+
+.header-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 12px;
 }
 
 h1 {
   font-size: 2rem;
-  color: #1a365d;
-  letter-spacing: 0.1em;
+  font-weight: 800;
+  color: #1a1a1a;
+  letter-spacing: -0.02em;
 }
 
 .subtitle {
-  font-size: 0.9rem;
-  color: #718096;
-  margin-top: 2px;
+  font-size: 0.82rem;
+  color: #7a7060;
+  margin-top: 3px;
+  letter-spacing: 0.02em;
+}
+
+/* 言語切り替えボタン */
+.lang-btn {
+  padding: 3px 9px;
+  border: 1.5px solid #8a8070;
+  background: transparent;
+  color: #5a5040;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.15s;
+  vertical-align: middle;
+}
+
+.lang-btn:hover {
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+  color: #fff;
 }
 
 /* スタート画面 */
@@ -54,9 +87,11 @@ h1 {
 }
 
 .start-content h2 {
-  font-size: 1.2rem;
-  color: #4a5568;
-  margin-bottom: 16px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #4a4030;
+  margin-bottom: 18px;
+  letter-spacing: 0.01em;
 }
 
 #start-difficulty-buttons {
@@ -71,73 +106,104 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16px 24px;
-  border: 2px solid #3182ce;
-  background: white;
-  border-radius: 10px;
+  padding: 14px 22px;
+  border: 1.5px solid #c8c0b0;
+  background: #fff;
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s;
-  min-width: 110px;
+  transition: all 0.15s;
+  min-width: 100px;
+}
+
+.start-diff-btn:hover {
+  border-color: #1a1a1a;
 }
 
 .start-diff-btn.active {
-  background: #3182ce;
-  color: white;
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+  color: #fff;
 }
 
 .start-diff-btn .diff-label {
-  font-size: 1.1rem;
-  font-weight: bold;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 .start-diff-btn .diff-desc {
-  font-size: 0.75rem;
-  margin-top: 4px;
-  opacity: 0.8;
+  font-size: 0.7rem;
+  margin-top: 3px;
+  opacity: 0.7;
+}
+
+.start-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
 #start-game {
-  padding: 14px 48px;
-  background: #38a169;
-  color: white;
+  padding: 13px 44px;
+  background: #1a1a1a;
+  color: #fff;
   border: none;
-  border-radius: 10px;
-  font-size: 1.2rem;
-  font-weight: bold;
+  border-radius: 6px;
+  font-size: 1.05rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.15s;
+  letter-spacing: 0.03em;
 }
 
 #start-game:hover {
-  background: #2f855a;
+  background: #333;
+}
+
+#resume-game {
+  padding: 10px 36px;
+  background: transparent;
+  color: #1a1a1a;
+  border: 1.5px solid #1a1a1a;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+#resume-game:hover {
+  background: #1a1a1a;
+  color: #fff;
 }
 
 /* ルール・遊び方 */
 .rules-section {
   width: 100%;
-  max-width: 450px;
-  background: white;
-  border-radius: 10px;
-  border: 1px solid #e2e8f0;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #d8d0c4;
   overflow: hidden;
 }
 
 .rules-section summary {
-  padding: 12px 16px;
-  font-weight: bold;
-  color: #2d3748;
+  padding: 11px 15px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #2d2820;
   cursor: pointer;
   user-select: none;
   list-style: none;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
 }
 
 .rules-section summary::before {
   content: '▶';
-  font-size: 0.7rem;
+  font-size: 0.62rem;
   transition: transform 0.2s;
+  color: #7a7060;
 }
 
 .rules-section[open] summary::before {
@@ -145,13 +211,13 @@ h1 {
 }
 
 .rules-content {
-  padding: 0 16px 16px;
+  padding: 0 16px 14px;
 }
 
 .rules-content h3 {
-  font-size: 0.95rem;
-  color: #2d3748;
-  margin: 12px 0 6px;
+  font-size: 0.88rem;
+  color: #2d2820;
+  margin: 11px 0 5px;
 }
 
 .rules-content h3:first-child {
@@ -159,29 +225,39 @@ h1 {
 }
 
 .rules-content ul {
-  padding-left: 20px;
-  font-size: 0.85rem;
-  color: #4a5568;
-  line-height: 1.7;
+  padding-left: 18px;
+  font-size: 0.82rem;
+  color: #5a5040;
+  line-height: 1.75;
 }
 
 .rules-content p {
-  font-size: 0.85rem;
-  color: #4a5568;
+  font-size: 0.82rem;
+  color: #5a5040;
   line-height: 1.6;
 }
 
 .rules-in-game {
-  margin-top: 4px;
+  margin-top: 0;
+}
+
+/* ゲーム画面 */
+#game-screen {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
 /* コントロール */
 #controls {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
   flex-wrap: wrap;
   justify-content: center;
+  width: 100%;
 }
 
 #difficulty-buttons {
@@ -190,56 +266,71 @@ h1 {
 }
 
 .diff-btn {
-  padding: 8px 16px;
-  border: 2px solid #3182ce;
-  background: white;
-  color: #3182ce;
-  font-size: 0.9rem;
+  padding: 7px 16px;
+  border: 1.5px solid #c8c0b0;
+  background: #fff;
+  color: #4a4030;
+  font-size: 0.88rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
 }
 
 .diff-btn:first-child {
-  border-radius: 6px 0 0 6px;
+  border-radius: 4px 0 0 4px;
 }
 
 .diff-btn:last-child {
-  border-radius: 0 6px 6px 0;
+  border-radius: 0 4px 4px 0;
+}
+
+.diff-btn:not(:first-child) {
+  border-left: none;
 }
 
 .diff-btn.active {
-  background: #3182ce;
-  color: white;
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+  color: #fff;
+}
+
+.diff-btn:hover:not(.active) {
+  background: #f5f3ee;
+  border-color: #8a8070;
 }
 
 #new-game {
-  padding: 8px 20px;
-  background: #38a169;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  padding: 7px 18px;
+  background: transparent;
+  color: #1a1a1a;
+  border: 1.5px solid #1a1a1a;
+  border-radius: 4px;
+  font-size: 0.88rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.15s;
 }
 
 #new-game:hover {
-  background: #2f855a;
+  background: #1a1a1a;
+  color: #fff;
 }
 
 /* ゲーム情報 */
 #game-info {
   display: flex;
-  gap: 24px;
-  font-size: 1.1rem;
-  color: #4a5568;
+  gap: 28px;
+  font-size: 1rem;
+  color: #4a4030;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
 }
 
 /* 盤面 */
 #board-container {
   position: relative;
   width: 100%;
-  max-width: 450px;
+  max-width: 440px;
   aspect-ratio: 1;
 }
 
@@ -247,55 +338,58 @@ h1 {
   width: 100%;
   height: 100%;
   border-collapse: collapse;
-  border: 3px solid #1a365d;
+  border: 3px solid #1a1a1a;
   table-layout: fixed;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 #board td {
-  border: 1px solid #a0aec0;
+  border: 1px solid #b0a898;
   text-align: center;
   vertical-align: middle;
-  font-size: 1.4rem;
+  font-size: 1.45rem;
+  font-weight: 500;
   cursor: pointer;
   position: relative;
   user-select: none;
-  transition: background 0.15s;
+  transition: background 0.1s;
 }
 
 #board td.given {
-  font-weight: bold;
-  color: #1a365d;
-  background: #edf2f7;
+  font-weight: 800;
+  color: #1a1a1a;
+  background: #f0ede6;
 }
 
 #board td.user-input {
-  color: #3182ce;
+  color: #1d54a0;
 }
 
 #board td.selected {
-  background: #bee3f8 !important;
+  background: #fff8e1 !important;
 }
 
 #board td.highlighted {
-  background: #e2e8f0;
+  background: #faf8f4;
 }
 
 #board td.error {
-  color: #e53e3e;
-  background: #fed7d7 !important;
+  color: #9b1c1c;
+  background: #fde8e8 !important;
 }
 
 #board td.same-number {
-  background: #c3dafe;
+  background: #e8f0ff;
 }
 
 /* 3x3ボックスの太線 */
 #board tr:nth-child(3n) td {
-  border-bottom: 3px solid #1a365d;
+  border-bottom: 3px solid #1a1a1a;
 }
 
 #board td:nth-child(3n) {
-  border-right: 3px solid #1a365d;
+  border-right: 3px solid #1a1a1a;
 }
 
 /* メモ表示 */
@@ -311,8 +405,9 @@ h1 {
 }
 
 .memo-grid span {
-  font-size: 0.55rem;
-  color: #718096;
+  font-size: 0.52rem;
+  font-weight: 400;
+  color: #7a7060;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -321,91 +416,117 @@ h1 {
 /* 数字パッド */
 #numpad {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
   width: 100%;
-  max-width: 350px;
+  max-width: 300px;
 }
 
 .num-btn {
-  padding: 14px;
-  font-size: 1.3rem;
-  border: 2px solid #cbd5e0;
-  background: white;
-  border-radius: 8px;
+  padding: 16px 8px;
+  font-size: 1.4rem;
+  font-weight: 500;
+  border: 1.5px solid #c8c0b0;
+  background: #fff;
+  color: #1a1a1a;
+  border-radius: 4px;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.1s;
 }
 
 .num-btn:hover {
-  background: #edf2f7;
+  background: #f5f3ee;
+  border-color: #8a8070;
 }
 
 .num-btn:active {
-  background: #bee3f8;
+  background: #1a1a1a;
+  color: #fff;
+  border-color: #1a1a1a;
 }
 
 .num-btn.erase-btn {
-  background: #fed7d7;
-  border-color: #fc8181;
-  color: #c53030;
+  grid-column: 1 / -1;
+  font-size: 0.92rem;
+  font-weight: 600;
+  padding: 11px 8px;
+  background: #fef5f5;
+  border-color: #e0b0b0;
+  color: #8b1c1c;
+  letter-spacing: 0.03em;
+}
+
+.num-btn.erase-btn:hover {
+  background: #9b1c1c;
+  border-color: #9b1c1c;
+  color: #fff;
 }
 
 .num-btn.completed {
-  opacity: 0.3;
+  opacity: 0.25;
   cursor: default;
+  pointer-events: none;
 }
 
 /* アクションボタン群 */
 #action-buttons {
   display: flex;
-  gap: 8px;
+  gap: 7px;
   width: 100%;
-  max-width: 350px;
+  max-width: 300px;
 }
 
 #action-buttons button {
   flex: 1;
-  padding: 10px 4px;
-  border: 2px solid #a0aec0;
-  background: white;
-  border-radius: 8px;
-  font-size: 0.85rem;
+  padding: 9px 4px;
+  border: 1.5px solid #c8c0b0;
+  background: #fff;
+  color: #2d2820;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 #action-buttons button:hover {
-  background: #edf2f7;
+  background: #f5f3ee;
+  border-color: #8a8070;
 }
 
 #action-buttons kbd {
-  font-size: 0.65rem;
-  background: #edf2f7;
-  padding: 2px 5px;
-  border-radius: 3px;
-  border: 1px solid #cbd5e0;
+  font-size: 0.6rem;
+  background: #f0ede6;
+  padding: 1px 4px;
+  border-radius: 2px;
+  border: 1px solid #c8c0b0;
   font-family: inherit;
+  color: #7a7060;
 }
 
 #memo-toggle {
-  border-color: #805ad5 !important;
-  color: #805ad5;
+  border-color: #9b85cc !important;
+  color: #5b3fa0;
+}
+
+#memo-toggle:hover {
+  background: #f8f5ff !important;
 }
 
 #memo-toggle.active {
-  background: #805ad5 !important;
-  color: white;
+  background: #5b3fa0 !important;
+  border-color: #5b3fa0 !important;
+  color: #fff;
 }
 
 #memo-toggle.active kbd {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.4);
-  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 /* ローディング */
@@ -415,16 +536,17 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.9);
-  font-size: 1.2rem;
-  color: #4a5568;
+  background: rgba(255, 255, 255, 0.92);
+  font-size: 1.1rem;
+  color: #7a7060;
+  font-weight: 500;
 }
 
 /* モーダル共通 */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(20, 16, 10, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -432,81 +554,87 @@ h1 {
 }
 
 .modal-content {
-  background: white;
-  padding: 32px;
-  border-radius: 16px;
+  background: #fff;
+  padding: 28px 32px;
+  border-radius: 8px;
   text-align: center;
-  max-width: 380px;
+  max-width: 360px;
   width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 }
 
 .modal-content h2 {
-  font-size: 1.6rem;
-  color: #2d3748;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1a1a1a;
   margin-bottom: 12px;
+  letter-spacing: -0.01em;
 }
 
 #complete-modal .modal-content h2 {
-  color: #38a169;
-  font-size: 2rem;
+  color: #1a6b3a;
+  font-size: 1.9rem;
 }
 
 .modal-content p {
-  font-size: 1.05rem;
-  color: #4a5568;
-  margin-bottom: 8px;
+  font-size: 1rem;
+  color: #5a5040;
+  margin-bottom: 7px;
 }
 
 .modal-buttons {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   justify-content: center;
   margin-top: 16px;
   flex-wrap: wrap;
 }
 
 .btn-primary {
-  padding: 10px 28px;
-  background: #3182ce;
-  color: white;
+  padding: 10px 26px;
+  background: #1a1a1a;
+  color: #fff;
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.15s;
 }
 
 .btn-primary:hover {
-  background: #2b6cb0;
+  background: #333;
 }
 
 .btn-secondary {
-  padding: 10px 28px;
-  background: #e2e8f0;
-  color: #4a5568;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
+  padding: 10px 26px;
+  background: #f5f3ee;
+  color: #4a4030;
+  border: 1.5px solid #c8c0b0;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.15s;
 }
 
 .btn-secondary:hover {
-  background: #cbd5e0;
+  background: #e8e4dc;
 }
 
 .btn-share {
-  padding: 10px 20px;
+  padding: 9px 18px;
   border: none;
-  border-radius: 8px;
-  font-size: 0.9rem;
+  border-radius: 5px;
+  font-size: 0.88rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.15s;
 }
 
 #share-x {
-  background: #000;
-  color: white;
+  background: #1a1a1a;
+  color: #fff;
 }
 
 #share-x:hover {
@@ -514,16 +642,17 @@ h1 {
 }
 
 .btn-share-copy {
-  background: #edf2f7;
-  color: #4a5568;
+  background: #f5f3ee;
+  color: #4a4030;
+  border: 1.5px solid #c8c0b0;
 }
 
 .btn-share-copy:hover {
-  background: #e2e8f0;
+  background: #e8e4dc;
 }
 
 #play-again {
-  margin-top: 16px;
+  margin-top: 14px;
 }
 
 .hidden {
@@ -533,20 +662,20 @@ h1 {
 /* 広告コンテナ */
 .ad-container {
   width: 100%;
-  max-width: 450px;
+  max-width: 440px;
   min-height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 8px 0;
+  margin: 4px 0;
 }
 
 .ad-in-game {
-  margin: 12px 0;
+  margin: 8px 0;
 }
 
 .ad-footer {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 /* Cookie同意バナー */
@@ -555,52 +684,52 @@ h1 {
   bottom: 0;
   left: 0;
   right: 0;
-  background: #2d3748;
-  color: white;
+  background: #2d2820;
+  color: #f5f3ee;
   z-index: 200;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
 }
 
 .cookie-consent-content {
   max-width: 600px;
   margin: 0 auto;
-  padding: 16px 20px;
+  padding: 14px 20px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
   justify-content: center;
 }
 
 .cookie-consent-content p {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   line-height: 1.5;
   flex: 1;
   min-width: 200px;
 }
 
 .cookie-consent-content a {
-  color: #90cdf4;
+  color: #c8c0b0;
   text-decoration: underline;
 }
 
 .cookie-consent-content .btn-primary {
   white-space: nowrap;
-  padding: 8px 24px;
-  font-size: 0.9rem;
+  padding: 7px 22px;
+  font-size: 0.88rem;
 }
 
 /* フッター */
 footer {
-  margin-top: 32px;
+  margin-top: 28px;
   padding: 16px;
   text-align: center;
-  font-size: 0.8rem;
-  color: #a0aec0;
+  font-size: 0.78rem;
+  color: #a0988c;
 }
 
 footer a {
-  color: #718096;
+  color: #7a7060;
   text-decoration: none;
 }
 
@@ -614,25 +743,39 @@ footer p {
 
 /* レスポンシブ */
 @media (max-width: 480px) {
+  body {
+    padding: 14px 12px;
+  }
+
   #board td {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
   }
+
   .memo-grid span {
-    font-size: 0.45rem;
+    font-size: 0.42rem;
   }
+
   .num-btn {
-    padding: 10px;
-    font-size: 1.1rem;
+    padding: 12px 8px;
+    font-size: 1.2rem;
   }
+
+  .num-btn.erase-btn {
+    padding: 9px 8px;
+    font-size: 0.85rem;
+  }
+
   #action-buttons button {
     padding: 8px 2px;
     font-size: 0.75rem;
   }
+
   #action-buttons kbd {
     display: none;
   }
+
   .start-diff-btn {
-    padding: 12px 16px;
-    min-width: 90px;
+    padding: 11px 14px;
+    min-width: 88px;
   }
 }
