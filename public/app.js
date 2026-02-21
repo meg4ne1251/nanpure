@@ -365,7 +365,6 @@
       {
         board: board.map((r) => [...r]),
         memos: memos.map((r) => r.map((s) => new Set(s))),
-        mistakes,
       },
     ];
     historyIndex = 0;
@@ -554,12 +553,12 @@
 
   // === Undo/Redo ===
   // 変更を適用した「後」に状態をプッシュする
+  // 注: mistakesは履歴に含めない（ゲーム的に一度のミスは取り消せない）
   function pushState() {
     history = history.slice(0, historyIndex + 1);
     history.push({
       board: board.map((r) => [...r]),
       memos: memos.map((r) => r.map((s) => new Set(s))),
-      mistakes,
     });
     historyIndex = history.length - 1;
   }
@@ -567,8 +566,7 @@
   function restoreState(state) {
     board = state.board.map((r) => [...r]);
     memos = state.memos.map((r) => r.map((s) => new Set(s)));
-    mistakes = state.mistakes;
-    updateMistakes();
+    // mistakesは復元しない（一度のミスは履歴で取り消さない）
     renderBoard();
   }
 
@@ -616,7 +614,6 @@
         {
           board: board.map((r) => [...r]),
           memos: memos.map((r) => r.map((s) => new Set(s))),
-          mistakes: 0,
         },
       ];
       historyIndex = 0;
