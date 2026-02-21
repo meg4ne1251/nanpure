@@ -134,11 +134,17 @@
   function applyTranslations() {
     document.querySelectorAll('[data-i18n]').forEach((el) => {
       const key = el.getAttribute('data-i18n');
-      if (t[key] !== undefined) el.textContent = t[key];
+      if (t[key] !== undefined) {
+        // eslint-disable-next-line no-param-reassign
+        el.textContent = t[key];
+      }
     });
     document.querySelectorAll('[data-i18n-html]').forEach((el) => {
       const key = el.getAttribute('data-i18n-html');
-      if (t[key] !== undefined) el.innerHTML = t[key];
+      if (t[key] !== undefined) {
+        // eslint-disable-next-line no-param-reassign
+        el.innerHTML = t[key];
+      }
     });
   }
 

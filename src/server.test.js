@@ -2,6 +2,7 @@ describe('Server', () => {
   describe('Express app', () => {
     it('should load without errors', () => {
       // Basic sanity check that the server module loads
+      // eslint-disable-next-line global-require
       const app = require('./server');
       expect(app).toBeDefined();
     });
@@ -14,6 +15,7 @@ describe('Server', () => {
     beforeAll(() => {
       // Import after setting NODE_ENV
       process.env.NODE_ENV = 'test';
+      // eslint-disable-next-line global-require
       app = require('./server');
     });
 
