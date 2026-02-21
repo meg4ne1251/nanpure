@@ -41,7 +41,14 @@
       "files": ["src/sudoku.js"],
       "rules": {
         "operator-linebreak": "off",
-        "comma-dangle": "off"
+        "comma-dangle": "off",
+        "no-continue": "off",
+        "no-multi-spaces": "off",
+        "no-use-before-define": ["error", { "functions": false }],
+        "implicit-arrow-linebreak": "off",
+        "function-paren-newline": "off",
+        "no-nested-ternary": "off",
+        "indent": "off"
       }
     },
     {
@@ -53,7 +60,8 @@
     {
       "files": ["*.test.js"],
       "rules": {
-        "no-unused-vars": "off"
+        "no-unused-vars": "off",
+        "comma-dangle": "off"
       }
     }
   ]

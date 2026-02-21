@@ -95,9 +95,7 @@ function countSolutions(board, maxCount = 2) {
 
 // 候補数字を全セルで計算
 function buildCandidates(board) {
-  const cands = Array.from({ length: 9 }, () =>
-    Array.from({ length: 9 }, () => new Set())
-  );
+  const cands = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => new Set()));
   for (let r = 0; r < 9; r++) {
     for (let c = 0; c < 9; c++) {
       if (board[r][c] === 0) {
@@ -163,9 +161,7 @@ function hiddenSingle(board, cands) {
 
   for (const cells of unitGetters) {
     for (let n = 1; n <= 9; n++) {
-      const possibleCells = cells.filter(
-        ([r, c]) => board[r][c] === 0 && cands[r][c].has(n)
-      );
+      const possibleCells = cells.filter(([r, c]) => board[r][c] === 0 && cands[r][c].has(n));
       if (possibleCells.length === 1) {
         const [r, c] = possibleCells[0];
         return { r, c, val: n };
@@ -223,9 +219,7 @@ function pointingPairs(board, cands) {
       const boxCells = getBoxCells(br, bc);
 
       for (let n = 1; n <= 9; n++) {
-        const cells = boxCells.filter(
-          ([r, c]) => board[r][c] === 0 && cands[r][c].has(n)
-        );
+        const cells = boxCells.filter(([r, c]) => board[r][c] === 0 && cands[r][c].has(n));
         if (cells.length < 2 || cells.length > 3) continue;
 
         // 全て同じ行？
@@ -286,8 +280,10 @@ function hiddenPairs(board, cands) {
 
         // 同じ2セルか？
         if (
-          pos1[0][0] === pos2[0][0] && pos1[0][1] === pos2[0][1] &&
-          pos1[1][0] === pos2[1][0] && pos1[1][1] === pos2[1][1]
+          pos1[0][0] === pos2[0][0] &&
+          pos1[0][1] === pos2[0][1] &&
+          pos1[1][0] === pos2[1][0] &&
+          pos1[1][1] === pos2[1][1]
         ) {
           const pairNums = new Set([nums[i], nums[j]]);
           for (const [r, c] of pos1) {
@@ -312,7 +308,9 @@ function nakedTriples(board, cands) {
   const units = getAllUnits();
 
   for (const cells of units) {
-    const emptyCells = cells.filter(([r, c]) => board[r][c] === 0 && cands[r][c].size >= 2 && cands[r][c].size <= 3);
+    const emptyCells = cells.filter(
+      ([r, c]) => board[r][c] === 0 && cands[r][c].size >= 2 && cands[r][c].size <= 3
+    );
 
     if (emptyCells.length < 3) continue;
 
@@ -377,8 +375,14 @@ function xWing(board, cands) {
           const r2 = rowPositions[j].row;
           for (let r = 0; r < 9; r++) {
             if (r === r1 || r === r2) continue;
-            if (cands[r][c1].has(n)) { cands[r][c1].delete(n); changed = true; }
-            if (cands[r][c2].has(n)) { cands[r][c2].delete(n); changed = true; }
+            if (cands[r][c1].has(n)) {
+              cands[r][c1].delete(n);
+              changed = true;
+            }
+            if (cands[r][c2].has(n)) {
+              cands[r][c2].delete(n);
+              changed = true;
+            }
           }
         }
       }
@@ -405,8 +409,14 @@ function xWing(board, cands) {
           const c2 = colPositions[j].col;
           for (let c = 0; c < 9; c++) {
             if (c === c1 || c === c2) continue;
-            if (cands[r1][c].has(n)) { cands[r1][c].delete(n); changed = true; }
-            if (cands[r2][c].has(n)) { cands[r2][c].delete(n); changed = true; }
+            if (cands[r1][c].has(n)) {
+              cands[r1][c].delete(n);
+              changed = true;
+            }
+            if (cands[r2][c].has(n)) {
+              cands[r2][c].delete(n);
+              changed = true;
+            }
           }
         }
       }
@@ -435,14 +445,14 @@ function getAllUnits() {
 // ============================================================
 
 const TECHNIQUE_SCORE = {
-  nakedSingle: 1,     // 最も基本
-  hiddenSingle: 2,    // 基本
-  nakedPairs: 4,      // 中級
-  pointingPairs: 4,   // 中級
-  hiddenPairs: 5,     // 中級やや上
-  nakedTriples: 6,    // やや上級
-  xWing: 8,           // 上級
-  backtrack: 15,      // 試行錯誤が必要 = 非常に難しい
+  nakedSingle: 1, // 最も基本
+  hiddenSingle: 2, // 基本
+  nakedPairs: 4, // 中級
+  pointingPairs: 4, // 中級
+  hiddenPairs: 5, // 中級やや上
+  nakedTriples: 6, // やや上級
+  xWing: 8, // 上級
+  backtrack: 15, // 試行錯誤が必要 = 非常に難しい
 };
 
 // ============================================================
@@ -599,8 +609,8 @@ function classifyDifficulty(gradeResult) {
 // 生成の安定性のため、隣接難易度も許容するが、主分類を優先
 const DIFFICULTY_CONFIG = {
   easy: {
-    targetRemove: 40,    // 目標除去数 → ヒント41程度
-    maxRemove: 45,       // 最大除去数 → ヒント36程度
+    targetRemove: 40, // 目標除去数 → ヒント41程度
+    maxRemove: 45, // 最大除去数 → ヒント36程度
     accept: ['easy'],
   },
   medium: {
@@ -618,9 +628,7 @@ const DIFFICULTY_CONFIG = {
 // パズル盤面を生成
 function createPuzzleBoard(solution, maxRemove) {
   const puzzle = solution.map((row) => [...row]);
-  const positions = shuffle(
-    Array.from({ length: 81 }, (_, i) => [Math.floor(i / 9), i % 9])
-  );
+  const positions = shuffle(Array.from({ length: 81 }, (_, i) => [Math.floor(i / 9), i % 9]));
 
   let removed = 0;
   for (const [row, col] of positions) {
@@ -652,7 +660,8 @@ function generatePuzzle(difficulty = 'medium') {
     for (let v = 0; v < 2; v++) {
       if (Date.now() - startTime >= TIME_LIMIT) break;
 
-      const removeTarget = config.targetRemove +
+      const removeTarget =
+        config.targetRemove +
         Math.floor(Math.random() * (config.maxRemove - config.targetRemove + 1));
       const { puzzle, removed } = createPuzzleBoard(solution, removeTarget);
 
@@ -705,11 +714,13 @@ function generatePuzzle(difficulty = 'medium') {
     solution,
     difficulty,
     hints: 81 - removed,
-    grade: grade ? {
-      totalScore: grade.totalScore,
-      maxTechniqueLevel: grade.maxTechniqueLevel,
-      techniquesUsed: grade.techniquesUsed,
-    } : null,
+    grade: grade
+      ? {
+          totalScore: grade.totalScore,
+          maxTechniqueLevel: grade.maxTechniqueLevel,
+          techniquesUsed: grade.techniquesUsed,
+        }
+      : null,
   };
 }
 

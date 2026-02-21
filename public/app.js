@@ -312,9 +312,7 @@
       puzzle = data.puzzle;
       solution = data.solution;
       board = puzzle.map((row) => [...row]);
-      memos = Array.from({ length: 9 }, () =>
-        Array.from({ length: 9 }, () => new Set())
-      );
+      memos = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => new Set()));
 
       // 初期状態を履歴に保存
       saveState();
@@ -526,7 +524,9 @@
   }
 
   function formatTime(s) {
-    const min = Math.floor(s / 60).toString().padStart(2, '0');
+    const min = Math.floor(s / 60)
+      .toString()
+      .padStart(2, '0');
     const sec = (s % 60).toString().padStart(2, '0');
     return `${min}:${sec}`;
   }

@@ -90,9 +90,7 @@ describe('Sudoku Puzzle Generator', () => {
       const hardResult = generatePuzzle('hard');
 
       if (easyResult.grade && hardResult.grade) {
-        expect(easyResult.grade.totalScore).toBeLessThanOrEqual(
-          hardResult.grade.totalScore + 50
-        );
+        expect(easyResult.grade.totalScore).toBeLessThanOrEqual(hardResult.grade.totalScore + 50);
       }
     }, 15000);
   });
