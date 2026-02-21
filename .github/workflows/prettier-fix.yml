@@ -1,0 +1,48 @@
+name: Prettier Auto-Format
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+    # PRの場合と自分のリポジトリへのプッシュの場合のみ実行
+    # (フォークからのPRでは書き込み権がないため)
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Prettier fix
+        run: npx prettier --write .
+
+      - name: Check for changes and commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore: fix code formatting with Prettier'
+          file_pattern: |
+            *.js
+            *.json
+            *.html
+            *.css
+            *.md
+            public/**/*
+            src/**/*
+          skip_fetch: false
+          skip_checkout: true

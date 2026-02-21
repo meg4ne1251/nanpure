@@ -29,8 +29,10 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
-  prettier:
+  prettier-check:
     runs-on: ubuntu-latest
+    # prettier-fix.yml が自動コミットした直後のチェックはスキップ
+    if: "!contains(github.event.head_commit.message, 'chore: fix code formatting')"
 
     steps:
       - name: Checkout code
