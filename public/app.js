@@ -1,4 +1,152 @@
 (() => {
+  // === i18n 翻訳システム ===
+  const translations = {
+    ja: {
+      title: 'ナンプレ',
+      subtitle: '無料オンライン数独パズル',
+      selectDifficulty: '難易度を選んでスタート',
+      easy: '初級',
+      medium: '中級',
+      hard: '上級',
+      easyHints: 'ヒント 36〜40',
+      mediumHints: 'ヒント 28〜32',
+      hardHints: 'ヒント 22〜26',
+      startGame: 'ゲームスタート',
+      newGame: '新しいゲーム',
+      loading: '生成中...',
+      erase: '消',
+      memoOn: 'メモモード: ON <kbd>M</kbd>',
+      memoOff: 'メモモード: OFF <kbd>M</kbd>',
+      undo: '戻る <kbd>Ctrl+Z</kbd>',
+      redo: '進む <kbd>Ctrl+Y</kbd>',
+      confirm: '確認',
+      confirmMessage: '現在のゲームを中断して新しいゲームを始めますか？',
+      yes: 'はい',
+      no: 'いいえ',
+      cleared: 'クリア！',
+      shareX: 'X でシェア',
+      copyResult: '結果をコピー',
+      copied: 'コピーしました！',
+      playAgain: 'もう一度プレイ',
+      mistakes: 'ミス',
+      difficultyLabel: '難易度',
+      timeLabel: 'タイム',
+      mistakesLabel: 'ミス',
+      mistakesCount: '回',
+      rulesTitle: 'ルール・遊び方',
+      rulesContent: `
+        <h3>基本ルール</h3>
+        <ul>
+          <li>9×9のマスに1〜9の数字を埋めます</li>
+          <li><strong>横一列</strong>（行）に1〜9が一つずつ入ります</li>
+          <li><strong>縦一列</strong>（列）に1〜9が一つずつ入ります</li>
+          <li><strong>太線で囲まれた3×3のブロック</strong>に1〜9が一つずつ入ります</li>
+        </ul>
+        <h3>操作方法</h3>
+        <ul>
+          <li><strong>セル選択:</strong> クリック / 矢印キー / WASD</li>
+          <li><strong>数字入力:</strong> 数字キー(1-9) / 画面の数字ボタン</li>
+          <li><strong>消去:</strong> 0 / Backspace / Delete / 消ボタン</li>
+          <li><strong>メモモード切替:</strong> Mキー</li>
+          <li><strong>元に戻す:</strong> Ctrl+Z</li>
+          <li><strong>やり直し:</strong> Ctrl+Y / Ctrl+Shift+Z</li>
+        </ul>
+        <h3>メモ機能</h3>
+        <p>メモモードをONにすると、候補数字を小さくメモできます。確定する数字が見つかったらメモモードをOFFにして入力しましょう。</p>`,
+      cookieMessage:
+        'このサイトでは、広告の表示とアクセス解析のためにCookieを使用しています。詳しくは<a href="/privacy.html">プライバシーポリシー</a>をご覧ください。',
+      cookieAccept: '同意する',
+      footerName: 'ナンプレ - 無料オンライン数独パズル',
+      privacyPolicy: 'プライバシーポリシー',
+      shareText: (diff, time, miss) =>
+        `ナンプレ（${diff}）を${time}でクリア！ミス${miss}回\n#ナンプレ #数独 #Sudoku\nhttps://nanpure.meg4ne.net`,
+    },
+    en: {
+      title: 'Nanpure',
+      subtitle: 'Free Online Sudoku Puzzle',
+      selectDifficulty: 'Select Difficulty & Start',
+      easy: 'Easy',
+      medium: 'Medium',
+      hard: 'Hard',
+      easyHints: 'Hints 36-40',
+      mediumHints: 'Hints 28-32',
+      hardHints: 'Hints 22-26',
+      startGame: 'Start Game',
+      newGame: 'New Game',
+      loading: 'Generating...',
+      erase: 'Del',
+      memoOn: 'Notes: ON <kbd>M</kbd>',
+      memoOff: 'Notes: OFF <kbd>M</kbd>',
+      undo: 'Undo <kbd>Ctrl+Z</kbd>',
+      redo: 'Redo <kbd>Ctrl+Y</kbd>',
+      confirm: 'Confirm',
+      confirmMessage: 'Abandon current game and start a new one?',
+      yes: 'Yes',
+      no: 'No',
+      cleared: 'Complete!',
+      shareX: 'Share on X',
+      copyResult: 'Copy Result',
+      copied: 'Copied!',
+      playAgain: 'Play Again',
+      mistakes: 'Mistakes',
+      difficultyLabel: 'Difficulty',
+      timeLabel: 'Time',
+      mistakesLabel: 'Mistakes',
+      mistakesCount: '',
+      rulesTitle: 'Rules & How to Play',
+      rulesContent: `
+        <h3>Basic Rules</h3>
+        <ul>
+          <li>Fill the 9×9 grid with numbers 1-9</li>
+          <li>Each <strong>row</strong> must contain 1-9 exactly once</li>
+          <li>Each <strong>column</strong> must contain 1-9 exactly once</li>
+          <li>Each <strong>3×3 box</strong> (outlined in bold) must contain 1-9 exactly once</li>
+        </ul>
+        <h3>Controls</h3>
+        <ul>
+          <li><strong>Select cell:</strong> Click / Arrow keys / WASD</li>
+          <li><strong>Enter number:</strong> Number keys (1-9) / On-screen buttons</li>
+          <li><strong>Erase:</strong> 0 / Backspace / Delete / Del button</li>
+          <li><strong>Toggle notes:</strong> M key</li>
+          <li><strong>Undo:</strong> Ctrl+Z</li>
+          <li><strong>Redo:</strong> Ctrl+Y / Ctrl+Shift+Z</li>
+        </ul>
+        <h3>Notes Mode</h3>
+        <p>Turn on Notes mode to pencil in candidate numbers. When you find the correct number, turn off Notes mode and enter it.</p>`,
+      cookieMessage:
+        'This site uses cookies for advertising and analytics. See our <a href="/privacy.html">Privacy Policy</a> for details.',
+      cookieAccept: 'Accept',
+      footerName: 'Nanpure - Free Online Sudoku Puzzle',
+      privacyPolicy: 'Privacy Policy',
+      shareText: (diff, time, miss) =>
+        `Nanpure Sudoku (${diff}) cleared in ${time}! Mistakes: ${miss}\n#Nanpure #Sudoku\nhttps://nanpure.meg4ne.net`,
+    },
+  };
+
+  // 言語判定
+  const userLang = navigator.language || navigator.userLanguage || 'ja';
+  const lang = userLang.startsWith('ja') ? 'ja' : 'en';
+  const t = translations[lang];
+
+  // HTML lang属性を設定
+  document.documentElement.lang = lang;
+
+  // i18n適用
+  function applyTranslations() {
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+      const key = el.getAttribute('data-i18n');
+      if (t[key] !== undefined) {
+        el.textContent = t[key];
+      }
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach((el) => {
+      const key = el.getAttribute('data-i18n-html');
+      if (t[key] !== undefined) {
+        el.innerHTML = t[key];
+      }
+    });
+  }
+
   // 状態
   let puzzle = [];
   let solution = [];
@@ -30,10 +178,16 @@
   const completeDifficulty = document.getElementById('complete-difficulty');
   const confirmModal = document.getElementById('confirm-modal');
 
-  const DIFFICULTY_LABELS = { easy: '初級', medium: '中級', hard: '上級' };
+  const DIFFICULTY_LABELS = {
+    easy: t.easy,
+    medium: t.medium,
+    hard: t.hard,
+  };
 
   // 初期化
   function init() {
+    applyTranslations();
+    setupCookieConsent();
     setupStartScreen();
     setupDifficultyButtons();
     setupNumpad();
@@ -50,6 +204,39 @@
     });
   }
 
+  // === Cookie同意 & AdSense ===
+  function setupCookieConsent() {
+    const consentBanner = document.getElementById('cookie-consent');
+    const acceptBtn = document.getElementById('cookie-accept');
+
+    if (localStorage.getItem('cookie-consent') === 'accepted') {
+      loadAdSense();
+      return;
+    }
+
+    consentBanner.classList.remove('hidden');
+    acceptBtn.addEventListener('click', () => {
+      localStorage.setItem('cookie-consent', 'accepted');
+      consentBanner.classList.add('hidden');
+      loadAdSense();
+    });
+  }
+
+  function loadAdSense() {
+    const script = document.getElementById('adsense-script');
+    if (script && !script.src) {
+      script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+    }
+    // 広告スロットを初期化
+    try {
+      document.querySelectorAll('.adsbygoogle').forEach(() => {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      });
+    } catch (e) {
+      // AdSense未設定時は無視
+    }
+  }
+
   // スタート画面
   function setupStartScreen() {
     document.querySelectorAll('.start-diff-btn').forEach((btn) => {
@@ -57,7 +244,6 @@
         document.querySelectorAll('.start-diff-btn').forEach((b) => b.classList.remove('active'));
         btn.classList.add('active');
         difficulty = btn.dataset.diff;
-        // ゲーム画面の難易度ボタンも同期
         syncDifficultyButtons();
       });
     });
@@ -129,7 +315,7 @@
   }
 
   function updateMemoButtonText() {
-    memoToggleBtn.innerHTML = `メモモード: ${memoMode ? 'ON' : 'OFF'} <kbd>M</kbd>`;
+    memoToggleBtn.innerHTML = memoMode ? t.memoOn : t.memoOff;
     memoToggleBtn.classList.toggle('active', memoMode);
   }
 
@@ -142,15 +328,12 @@
   // キーボード入力
   function setupKeyboard() {
     document.addEventListener('keydown', (e) => {
-      // Undo/Redo はゲーム中のみ
       if (gameActive) {
-        // Ctrl+Z: Undo
         if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === 'z') {
           e.preventDefault();
           undo();
           return;
         }
-        // Ctrl+Y or Ctrl+Shift+Z: Redo
         if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
           e.preventDefault();
           redo();
@@ -165,7 +348,6 @@
 
       if (!gameActive) return;
 
-      // 数字入力
       if (e.key >= '1' && e.key <= '9') {
         if (selected) inputNumber(parseInt(e.key, 10));
         return;
@@ -175,7 +357,6 @@
         return;
       }
 
-      // メモモード切替
       if (e.key === 'm' || e.key === 'M') {
         if (!e.ctrlKey && !e.metaKey) {
           toggleMemoMode();
@@ -183,7 +364,6 @@
         }
       }
 
-      // セル移動: 矢印キー
       if (selected) {
         let moved = false;
         switch (e.key) {
@@ -209,7 +389,6 @@
           return;
         }
 
-        // WASD移動
         const lower = e.key.toLowerCase();
         if (!e.ctrlKey && !e.metaKey) {
           switch (lower) {
@@ -232,22 +411,21 @@
           }
         }
 
-        // Emacs キーバインド (Ctrl+P/N/B/F)
         if (e.ctrlKey || e.metaKey) {
           switch (lower) {
-            case 'p': // 上
+            case 'p':
               e.preventDefault();
               selectCell(Math.max(0, selected.row - 1), selected.col);
               return;
-            case 'n': // 下
+            case 'n':
               e.preventDefault();
               selectCell(Math.min(8, selected.row + 1), selected.col);
               return;
-            case 'b': // 左
+            case 'b':
               e.preventDefault();
               selectCell(selected.row, Math.max(0, selected.col - 1));
               return;
-            case 'f': // 右
+            case 'f':
               e.preventDefault();
               selectCell(selected.row, Math.min(8, selected.col + 1));
               return;
@@ -262,9 +440,8 @@
     const state = {
       board: board.map((r) => [...r]),
       memos: memos.map((r) => r.map((s) => new Set(s))),
-      mistakes: mistakes,
+      mistakes,
     };
-    // 現在位置より先の履歴を切り捨て
     history = history.slice(0, historyIndex + 1);
     history.push(state);
     historyIndex = history.length - 1;
@@ -314,18 +491,16 @@
       board = puzzle.map((row) => [...row]);
       memos = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => new Set()));
 
-      // 初期状態を履歴に保存
       saveState();
 
       renderBoard();
       gameActive = true;
-      gameStarted = true;
       timerInterval = setInterval(() => {
         seconds++;
         updateTimer();
       }, 1000);
     } catch (err) {
-      console.error('パズル取得エラー:', err);
+      console.error('Puzzle fetch error:', err);
     } finally {
       loadingEl.classList.add('hidden');
     }
@@ -412,7 +587,6 @@
 
     if (puzzle[row][col] !== 0) return;
 
-    // 状態を保存（Undo用）
     saveState();
 
     if (memoMode && num !== 0) {
@@ -483,9 +657,9 @@
     gameActive = false;
     if (timerInterval) clearInterval(timerInterval);
 
-    completeDifficulty.textContent = `難易度: ${DIFFICULTY_LABELS[difficulty]}`;
-    completeTime.textContent = `タイム: ${formatTime(seconds)}`;
-    completeMistakes.textContent = `ミス: ${mistakes}回`;
+    completeDifficulty.textContent = `${t.difficultyLabel}: ${DIFFICULTY_LABELS[difficulty]}`;
+    completeTime.textContent = `${t.timeLabel}: ${formatTime(seconds)}`;
+    completeMistakes.textContent = `${t.mistakesLabel}: ${mistakes}${t.mistakesCount}`;
     completeModal.classList.remove('hidden');
   }
 
@@ -498,7 +672,7 @@
   function getShareText() {
     const diffLabel = DIFFICULTY_LABELS[difficulty];
     const time = formatTime(seconds);
-    return `ナンプレ（${diffLabel}）を${time}でクリア！ミス${mistakes}回\n#ナンプレ #数独 #Sudoku\n${location.origin}`;
+    return t.shareText(diffLabel, time, mistakes);
   }
 
   function shareToX() {
@@ -511,7 +685,7 @@
     navigator.clipboard.writeText(text).then(() => {
       const btn = document.getElementById('share-copy');
       const original = btn.textContent;
-      btn.textContent = 'コピーしました！';
+      btn.textContent = t.copied;
       setTimeout(() => {
         btn.textContent = original;
       }, 2000);
@@ -532,7 +706,7 @@
   }
 
   function updateMistakes() {
-    mistakesEl.textContent = `ミス: ${mistakes}`;
+    mistakesEl.textContent = `${t.mistakes}: ${mistakes}`;
   }
 
   init();
