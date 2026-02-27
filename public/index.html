@@ -50,10 +50,24 @@
       content="初級・中級・上級の3段階で遊べる無料ナンプレ。毎回ランダム生成で飽きない！Play free Sudoku online!"
     />
     <meta name="twitter:image" content="https://nanpure.meg4ne.net/og-image.png" />
+    <meta name="twitter:image:alt" content="ナンプレ - 無料オンライン数独パズル" />
+    <meta property="og:image:alt" content="ナンプレ - 無料オンライン数独パズル" />
+
+    <!-- Preconnect -->
+    <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin />
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
 
     <link rel="stylesheet" href="style.css" />
 
-    <!-- 構造化データ -->
+    <!-- 構造化データ: WebApplication -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -64,6 +78,7 @@
         "url": "https://nanpure.meg4ne.net/",
         "applicationCategory": "GameApplication",
         "operatingSystem": "Web",
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
         "inLanguage": ["ja", "en"],
         "offers": {
           "@type": "Offer",
@@ -73,13 +88,85 @@
       }
     </script>
 
+    <!-- 構造化データ: FAQPage -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "ナンプレ（数独）とは何ですか？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "ナンプレ（数独）は、9×9のマスに1〜9の数字を重複しないように埋めるロジックパズルです。各行・各列・各3×3ブロックに1〜9が一つずつ入ります。"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "ナンプレは無料で遊べますか？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "はい、完全無料でプレイできます。会員登録やアプリのインストールも不要で、ブラウザからすぐに遊べます。"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "難易度は選べますか？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "初級（ヒント36〜40）・中級（ヒント28〜32）・上級（ヒント22〜26）の3段階から選べます。初めての方は初級からお試しください。"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "スマホでも遊べますか？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "はい、スマートフォン・タブレット・パソコンすべてに対応しています。タッチ操作にも最適化されています。"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "ナンプレのコツを教えてください。",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "まずヒント数字が多い行・列・ブロックから埋めましょう。メモ機能で候補数字を記録し、候補が1つだけのマスから確定させるのが基本テクニックです。"
+            }
+          }
+        ]
+      }
+    </script>
+
+    <!-- 構造化データ: BreadcrumbList -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "ナンプレ",
+            "item": "https://nanpure.meg4ne.net/"
+          }
+        ]
+      }
+    </script>
+
     <!-- Google AdSense -->
     <!-- TODO: ca-pub-XXXXXXXXXXXXXXXX を実際のパブリッシャーIDに置き換えてください -->
     <script id="adsense-script" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" async></script>
   </head>
   <body>
-    <div id="app">
+    <main id="app">
       <header>
+        <nav aria-label="breadcrumb" class="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+          <span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a href="/" itemprop="item"><span itemprop="name" data-i18n="breadcrumbHome">ナンプレ</span></a>
+            <meta itemprop="position" content="1" />
+          </span>
+        </nav>
         <div class="header-title-row">
           <h1 data-i18n="title">ナンプレ</h1>
           <button id="lang-toggle" class="lang-btn">EN</button>
@@ -88,7 +175,7 @@
       </header>
 
       <!-- スタート画面 -->
-      <div id="start-screen">
+      <section id="start-screen" aria-label="Game Start">
         <div class="start-content">
           <h2 data-i18n="selectDifficulty">難易度を選んでスタート</h2>
           <div id="start-difficulty-buttons">
@@ -137,10 +224,73 @@
             </p>
           </div>
         </details>
-      </div>
+
+        <!-- SEOコンテンツ: ナンプレについて -->
+        <section class="seo-content" aria-label="About Nanpure">
+          <h2 data-i18n="aboutTitle">ナンプレ（数独）とは</h2>
+          <p data-i18n="aboutText1">
+            ナンプレ（数独）は、世界中で愛されるロジックパズルです。9×9のマスに1〜9の数字を、各行・各列・各3×3ブロックで重複しないように配置します。数学の知識は不要で、論理的思考力だけで解くことができます。
+          </p>
+          <p data-i18n="aboutText2">
+            このサイトでは、毎回ランダムに生成される唯一解のパズルを楽しめます。初級・中級・上級の3段階の難易度から選べ、メモ機能やUndo/Redo機能も搭載。スマートフォン・タブレット・パソコン対応で、いつでもどこでも無料でプレイできます。
+          </p>
+        </section>
+
+        <!-- SEOコンテンツ: 遊び方のコツ -->
+        <section class="seo-content" aria-label="Tips">
+          <h2 data-i18n="tipsTitle">ナンプレ攻略のコツ</h2>
+          <div class="tips-list" data-i18n-html="tipsContent">
+            <div class="tip-item">
+              <h3>1. ヒントが多い場所から始める</h3>
+              <p>最初にヒント数字が多い行・列・ブロックを探しましょう。空きマスが少ないほど、入る数字が絞りやすくなります。</p>
+            </div>
+            <div class="tip-item">
+              <h3>2. メモ機能を活用する</h3>
+              <p>候補となる数字をメモしておくと、論理的に絞り込みやすくなります。メモモードに切り替えて候補を記録しましょう。</p>
+            </div>
+            <div class="tip-item">
+              <h3>3. 消去法（ネイキッドシングル）</h3>
+              <p>あるマスに入る候補が1つだけなら、それが正解です。行・列・ブロックの既存の数字を確認して候補を絞りましょう。</p>
+            </div>
+            <div class="tip-item">
+              <h3>4. 隠れたシングル（ヒドゥンシングル）</h3>
+              <p>あるブロック内で、特定の数字が入れるマスが1つしかない場合、そこに確定できます。</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SEOコンテンツ: よくある質問 -->
+        <section class="seo-content seo-faq" aria-label="FAQ">
+          <h2 data-i18n="faqTitle">よくある質問</h2>
+          <details class="faq-item">
+            <summary data-i18n="faq1Q">ナンプレ（数独）とは何ですか？</summary>
+            <p data-i18n="faq1A">ナンプレ（数独）は、9×9のマスに1〜9の数字を重複しないように埋めるロジックパズルです。数学の知識は不要で、論理的思考力で解きます。世界中で「Sudoku」として親しまれています。</p>
+          </details>
+          <details class="faq-item">
+            <summary data-i18n="faq2Q">無料で遊べますか？会員登録は必要ですか？</summary>
+            <p data-i18n="faq2A">完全無料でプレイできます。会員登録もアプリのインストールも不要です。ブラウザを開くだけですぐに遊べます。</p>
+          </details>
+          <details class="faq-item">
+            <summary data-i18n="faq3Q">難易度はどのように違いますか？</summary>
+            <p data-i18n="faq3A">初級（ヒント36〜40個）は初めての方向け、中級（ヒント28〜32個）は慣れた方向け、上級（ヒント22〜26個）は高度なテクニックが必要です。</p>
+          </details>
+          <details class="faq-item">
+            <summary data-i18n="faq4Q">スマートフォンでも遊べますか？</summary>
+            <p data-i18n="faq4A">はい、スマートフォン・タブレット・パソコンすべてに対応したレスポンシブデザインです。タッチ操作でも快適にプレイできます。</p>
+          </details>
+          <details class="faq-item">
+            <summary data-i18n="faq5Q">ゲームの途中でやめても大丈夫ですか？</summary>
+            <p data-i18n="faq5A">はい、ゲームの進行状況はブラウザに自動保存されます。次回アクセス時に「続きをプレイ」ボタンから再開できます。</p>
+          </details>
+          <details class="faq-item">
+            <summary data-i18n="faq6Q">ナンプレにはどんな効果がありますか？</summary>
+            <p data-i18n="faq6A">ナンプレは論理的思考力・集中力・記憶力の向上に効果があるとされています。脳トレとしても世界中で愛用されています。</p>
+          </details>
+        </section>
+      </section>
 
       <!-- ゲーム画面 -->
-      <div id="game-screen" class="hidden">
+      <section id="game-screen" class="hidden" aria-label="Game Board">
         <div id="controls">
           <div id="difficulty-buttons">
             <button class="diff-btn" data-diff="easy" data-i18n="easy">初級</button>
@@ -214,7 +364,7 @@
             </ul>
           </div>
         </details>
-      </div>
+      </section>
 
       <!-- 確認ダイアログ -->
       <div id="confirm-modal" class="modal-overlay hidden">
@@ -257,7 +407,7 @@
           <button id="cookie-accept" class="btn-primary" data-i18n="cookieAccept">同意する</button>
         </div>
       </div>
-    </div>
+    </main>
 
     <footer>
       <!-- 広告枠: フッター上部 -->
@@ -271,8 +421,10 @@
           data-full-width-responsive="true"
         ></ins>
       </div>
-      <p>&copy; 2026 <span data-i18n="footerName">ナンプレ - 無料オンライン数独パズル</span></p>
-      <p><a href="/privacy.html" data-i18n="privacyPolicy">プライバシーポリシー</a></p>
+      <nav aria-label="Footer navigation">
+        <p>&copy; 2026 <span data-i18n="footerName">ナンプレ - 無料オンライン数独パズル</span></p>
+        <p><a href="/privacy.html" data-i18n="privacyPolicy">プライバシーポリシー</a></p>
+      </nav>
     </footer>
 
     <noscript>

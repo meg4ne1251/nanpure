@@ -61,6 +61,49 @@
       cookieAccept: '同意する',
       footerName: 'ナンプレ - 無料オンライン数独パズル',
       privacyPolicy: 'プライバシーポリシー',
+      breadcrumbHome: 'ナンプレ',
+      aboutTitle: 'ナンプレ（数独）とは',
+      aboutText1:
+        'ナンプレ（数独）は、世界中で愛されるロジックパズルです。9×9のマスに1〜9の数字を、各行・各列・各3×3ブロックで重複しないように配置します。数学の知識は不要で、論理的思考力だけで解くことができます。',
+      aboutText2:
+        'このサイトでは、毎回ランダムに生成される唯一解のパズルを楽しめます。初級・中級・上級の3段階の難易度から選べ、メモ機能やUndo/Redo機能も搭載。スマートフォン・タブレット・パソコン対応で、いつでもどこでも無料でプレイできます。',
+      tipsTitle: 'ナンプレ攻略のコツ',
+      tipsContent: `
+        <div class="tip-item">
+          <h3>1. ヒントが多い場所から始める</h3>
+          <p>最初にヒント数字が多い行・列・ブロックを探しましょう。空きマスが少ないほど、入る数字が絞りやすくなります。</p>
+        </div>
+        <div class="tip-item">
+          <h3>2. メモ機能を活用する</h3>
+          <p>候補となる数字をメモしておくと、論理的に絞り込みやすくなります。メモモードに切り替えて候補を記録しましょう。</p>
+        </div>
+        <div class="tip-item">
+          <h3>3. 消去法（ネイキッドシングル）</h3>
+          <p>あるマスに入る候補が1つだけなら、それが正解です。行・列・ブロックの既存の数字を確認して候補を絞りましょう。</p>
+        </div>
+        <div class="tip-item">
+          <h3>4. 隠れたシングル（ヒドゥンシングル）</h3>
+          <p>あるブロック内で、特定の数字が入れるマスが1つしかない場合、そこに確定できます。</p>
+        </div>`,
+      faqTitle: 'よくある質問',
+      faq1Q: 'ナンプレ（数独）とは何ですか？',
+      faq1A: 'ナンプレ（数独）は、9×9のマスに1〜9の数字を重複しないように埋めるロジックパズルです。数学の知識は不要で、論理的思考力で解きます。世界中で「Sudoku」として親しまれています。',
+      faq2Q: '無料で遊べますか？会員登録は必要ですか？',
+      faq2A: '完全無料でプレイできます。会員登録もアプリのインストールも不要です。ブラウザを開くだけですぐに遊べます。',
+      faq3Q: '難易度はどのように違いますか？',
+      faq3A: '初級（ヒント36〜40個）は初めての方向け、中級（ヒント28〜32個）は慣れた方向け、上級（ヒント22〜26個）は高度なテクニックが必要です。',
+      faq4Q: 'スマートフォンでも遊べますか？',
+      faq4A: 'はい、スマートフォン・タブレット・パソコンすべてに対応したレスポンシブデザインです。タッチ操作でも快適にプレイできます。',
+      faq5Q: 'ゲームの途中でやめても大丈夫ですか？',
+      faq5A: 'はい、ゲームの進行状況はブラウザに自動保存されます。次回アクセス時に「続きをプレイ」ボタンから再開できます。',
+      faq6Q: 'ナンプレにはどんな効果がありますか？',
+      faq6A: 'ナンプレは論理的思考力・集中力・記憶力の向上に効果があるとされています。脳トレとしても世界中で愛用されています。',
+      diffPageTitle: '',
+      diffPageContent: '',
+      otherDifficulties: '他の難易度：',
+      easyLink: '初級',
+      mediumLink: '中級',
+      hardLink: '上級',
       shareText: (diff, time, miss) =>
         `ナンプレ（${diff}）を${time}でクリア！ミス${miss}回\n#ナンプレ #数独 #Sudoku\nhttps://nanpure.meg4ne.net`,
     },
@@ -124,6 +167,49 @@
       cookieAccept: 'Accept',
       footerName: 'Nanpure - Free Online Sudoku Puzzle',
       privacyPolicy: 'Privacy Policy',
+      breadcrumbHome: 'Nanpure',
+      aboutTitle: 'What is Nanpure (Sudoku)?',
+      aboutText1:
+        'Nanpure (Sudoku) is a logic puzzle loved worldwide. Place numbers 1-9 in a 9×9 grid so that each row, column, and 3×3 block contains each number exactly once. No math knowledge is needed—just logical thinking.',
+      aboutText2:
+        'This site generates unique puzzles with guaranteed single solutions every time. Choose from 3 difficulty levels, use the notes feature and undo/redo. Fully responsive for smartphones, tablets, and PCs—play free anytime, anywhere.',
+      tipsTitle: 'Sudoku Tips & Strategies',
+      tipsContent: `
+        <div class="tip-item">
+          <h3>1. Start Where Hints Are Dense</h3>
+          <p>Look for rows, columns, or blocks with the most given numbers. Fewer empty cells means fewer possible candidates to consider.</p>
+        </div>
+        <div class="tip-item">
+          <h3>2. Use the Notes Feature</h3>
+          <p>Pencil in candidate numbers using Notes mode. This makes it easier to logically narrow down possibilities and spot patterns.</p>
+        </div>
+        <div class="tip-item">
+          <h3>3. Naked Singles</h3>
+          <p>If a cell has only one possible candidate after checking its row, column, and block, that candidate is the answer.</p>
+        </div>
+        <div class="tip-item">
+          <h3>4. Hidden Singles</h3>
+          <p>If a number can only go in one cell within a block, row, or column, it must go there—even if that cell has other candidates.</p>
+        </div>`,
+      faqTitle: 'Frequently Asked Questions',
+      faq1Q: 'What is Nanpure (Sudoku)?',
+      faq1A: 'Nanpure (Sudoku) is a logic puzzle where you fill a 9×9 grid with numbers 1-9 without repeating in any row, column, or 3×3 block. No math needed—just logic. Known worldwide as "Sudoku".',
+      faq2Q: 'Is it free? Do I need to register?',
+      faq2A: 'Completely free. No registration or app installation required. Just open your browser and start playing instantly.',
+      faq3Q: 'How do the difficulty levels differ?',
+      faq3A: 'Easy (36-40 hints) is for beginners, Medium (28-32 hints) for experienced players, and Hard (22-26 hints) requires advanced techniques.',
+      faq4Q: 'Can I play on my phone?',
+      faq4A: 'Yes, the game features a fully responsive design optimized for smartphones, tablets, and desktop computers. Touch controls work perfectly.',
+      faq5Q: 'Can I save my progress?',
+      faq5A: 'Yes, your game progress is automatically saved in your browser. Resume anytime with the "Resume Game" button on your next visit.',
+      faq6Q: 'What are the benefits of playing Nanpure?',
+      faq6A: 'Nanpure helps improve logical thinking, concentration, and memory. It\'s enjoyed worldwide as an effective brain training exercise.',
+      diffPageTitle: '',
+      diffPageContent: '',
+      otherDifficulties: 'Other difficulties:',
+      easyLink: 'Easy',
+      mediumLink: 'Medium',
+      hardLink: 'Hard',
       shareText: (diff, time, miss) =>
         `Nanpure Sudoku (${diff}) cleared in ${time}! Mistakes: ${miss}\n#Nanpure #Sudoku\nhttps://nanpure.meg4ne.net`,
     },
@@ -180,7 +266,8 @@
   let board = [];
   let memos = [];
   let selected = null;
-  let difficulty = 'medium';
+  // URLまたはbody属性から初期難易度を取得
+  let difficulty = document.body.dataset.difficulty || 'medium';
   let memoMode = false;
   let mistakes = 0;
   let timerInterval = null;

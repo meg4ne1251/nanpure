@@ -1,0 +1,4 @@
+Contact: mailto:security@meg4ne.net
+Expires: 2027-02-28T00:00:00.000Z
+Preferred-Languages: ja, en
+Canonical: https://nanpure.meg4ne.net/.well-known/security.txt

@@ -241,6 +241,159 @@ h1 {
   margin-top: 0;
 }
 
+/* SEOコンテンツセクション */
+.seo-content {
+  width: 100%;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #d8d0c4;
+  padding: 18px 16px;
+}
+
+.seo-content h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2d2820;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #e8e4dc;
+}
+
+.seo-content p {
+  font-size: 0.84rem;
+  color: #5a5040;
+  line-height: 1.75;
+  margin-bottom: 8px;
+}
+
+.seo-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* 攻略のコツ */
+.tips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tip-item {
+  padding: 10px 12px;
+  background: #faf8f4;
+  border-radius: 4px;
+  border-left: 3px solid #c8c0b0;
+}
+
+.tip-item h3 {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #2d2820;
+  margin-bottom: 4px;
+}
+
+.tip-item p {
+  font-size: 0.82rem;
+  color: #5a5040;
+  line-height: 1.65;
+  margin-bottom: 0;
+}
+
+/* FAQ */
+.seo-faq {
+  padding: 18px 16px;
+}
+
+.faq-item {
+  border-bottom: 1px solid #e8e4dc;
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+}
+
+.faq-item summary {
+  padding: 10px 4px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #2d2820;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.faq-item summary::before {
+  content: 'Q.';
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #5b3fa0;
+  flex-shrink: 0;
+}
+
+.faq-item p {
+  padding: 0 4px 10px 24px;
+  font-size: 0.82rem;
+  color: #5a5040;
+  line-height: 1.7;
+}
+
+/* 難易度別ランディングページ */
+.seo-difficulty-page {
+  border-left: 4px solid #5b3fa0;
+  background: #faf8f6;
+}
+
+.diff-page-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.diff-page-links a {
+  display: inline-block;
+  padding: 5px 14px;
+  background: #5b3fa0;
+  color: #fff;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.diff-page-links a:hover {
+  background: #7b5fc0;
+}
+
+.diff-page-links strong {
+  display: inline-block;
+  padding: 5px 14px;
+  background: #e8e4dc;
+  color: #5a5040;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* パンくずリスト */
+.breadcrumb {
+  font-size: 0.72rem;
+  color: #a0988c;
+  margin-bottom: 4px;
+}
+
+.breadcrumb a {
+  color: #7a7060;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
 /* ゲーム画面 */
 #game-screen {
   width: 100%;

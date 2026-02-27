@@ -81,5 +81,62 @@ describe('Server', () => {
       const res = await request(app).get('/sitemap.xml');
       expect(res.status).toBe(200);
     });
+
+    it('should serve manifest.json', async () => {
+      const res = await request(app).get('/manifest.json');
+      expect(res.status).toBe(200);
+      expect(res.headers['content-type']).toMatch(/json/);
+    });
+  });
+
+  describe('Difficulty landing pages', () => {
+    it('should serve /easy with correct title', async () => {
+      const res = await request(app).get('/easy');
+      expect(res.status).toBe(200);
+      expect(res.headers['content-type']).toMatch(/html/);
+      expect(res.text).toContain('ナンプレ 初級');
+      expect(res.text).toContain('data-difficulty="easy"');
+    });
+
+    it('should serve /medium with correct title', async () => {
+      const res = await request(app).get('/medium');
+      expect(res.status).toBe(200);
+      expect(res.headers['content-type']).toMatch(/html/);
+      expect(res.text).toContain('ナンプレ 中級');
+      expect(res.text).toContain('data-difficulty="medium"');
+    });
+
+    it('should serve /hard with correct title', async () => {
+      const res = await request(app).get('/hard');
+      expect(res.status).toBe(200);
+      expect(res.headers['content-type']).toMatch(/html/);
+      expect(res.text).toContain('ナンプレ 上級');
+      expect(res.text).toContain('data-difficulty="hard"');
+    });
+
+    it('should include canonical URL for difficulty pages', async () => {
+      const res = await request(app).get('/easy');
+      expect(res.text).toContain('href="https://nanpure.meg4ne.net/easy"');
+    });
+
+    it('should include difficulty SEO content section', async () => {
+      const res = await request(app).get('/hard');
+      expect(res.text).toContain('seo-difficulty-page');
+      expect(res.text).toContain('diff-page-links');
+    });
+  });
+
+  describe('404 handling', () => {
+    it('should return 404 HTML for unknown page routes', async () => {
+      const res = await request(app).get('/nonexistent-page');
+      expect(res.status).toBe(404);
+      expect(res.headers['content-type']).toMatch(/html/);
+    });
+
+    it('should return 404 JSON for unknown API routes', async () => {
+      const res = await request(app).get('/api/unknown');
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty('error', 'Not found');
+    });
   });
 });

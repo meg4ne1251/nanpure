@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ページが見つかりません - ナンプレ | Page Not Found - Nanpure</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+        background: #f5f3ee;
+        color: #1a1a1a;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 20px 16px;
+        text-align: center;
+      }
+      .container {
+        max-width: 480px;
+        width: 100%;
+      }
+      .error-code {
+        font-size: 6rem;
+        font-weight: 800;
+        color: #c8c0b0;
+        line-height: 1;
+        margin-bottom: 8px;
+      }
+      h1 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #2d2820;
+        margin-bottom: 12px;
+      }
+      p {
+        font-size: 0.92rem;
+        color: #5a5040;
+        line-height: 1.7;
+        margin-bottom: 24px;
+      }
+      .links {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+      }
+      .btn-home {
+        display: inline-block;
+        padding: 12px 32px;
+        background: #1a1a1a;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: background 0.15s;
+      }
+      .btn-home:hover {
+        background: #333;
+      }
+      .difficulty-links {
+        display: flex;
+        gap: 12px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .difficulty-links a {
+        padding: 8px 18px;
+        border: 1.5px solid #c8c0b0;
+        border-radius: 4px;
+        color: #4a4030;
+        text-decoration: none;
+        font-size: 0.88rem;
+        font-weight: 500;
+        transition: all 0.15s;
+      }
+      .difficulty-links a:hover {
+        background: #1a1a1a;
+        border-color: #1a1a1a;
+        color: #fff;
+      }
+      .lang-toggle {
+        margin-top: 20px;
+        font-size: 0.78rem;
+        color: #7a7060;
+      }
+      .lang-toggle a {
+        color: #5a5040;
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="error-code">404</div>
+      <div id="ja-content">
+        <h1>ページが見つかりません</h1>
+        <p>お探しのページは存在しないか、移動した可能性があります。</p>
+        <div class="links">
+          <a href="/" class="btn-home">トップページへ戻る</a>
+          <div class="difficulty-links">
+            <a href="/easy">初級</a>
+            <a href="/medium">中級</a>
+            <a href="/hard">上級</a>
+          </div>
+        </div>
+      </div>
+      <div id="en-content" style="display: none">
+        <h1>Page Not Found</h1>
+        <p>The page you're looking for doesn't exist or has been moved.</p>
+        <div class="links">
+          <a href="/" class="btn-home">Back to Home</a>
+          <div class="difficulty-links">
+            <a href="/easy">Easy</a>
+            <a href="/medium">Medium</a>
+            <a href="/hard">Hard</a>
+          </div>
+        </div>
+      </div>
+      <div class="lang-toggle">
+        <a id="toggle-lang">English / 日本語</a>
+      </div>
+    </div>
+    <script>
+      const ja = document.getElementById('ja-content');
+      const en = document.getElementById('en-content');
+      const toggle = document.getElementById('toggle-lang');
+      if (!navigator.language.startsWith('ja')) {
+        ja.style.display = 'none';
+        en.style.display = 'block';
+      }
+      toggle.addEventListener('click', () => {
+        const showEn = ja.style.display !== 'none';
+        ja.style.display = showEn ? 'none' : 'block';
+        en.style.display = showEn ? 'block' : 'none';
+      });
+    </script>
+  </body>
+</html>

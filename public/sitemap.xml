@@ -3,12 +3,36 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://nanpure.meg4ne.net/</loc>
-    <lastmod>2026-02-21</lastmod>
+    <lastmod>2026-02-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="ja" href="https://nanpure.meg4ne.net/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://nanpure.meg4ne.net/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://nanpure.meg4ne.net/"/>
+  </url>
+  <url>
+    <loc>https://nanpure.meg4ne.net/easy</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://nanpure.meg4ne.net/easy"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://nanpure.meg4ne.net/easy"/>
+  </url>
+  <url>
+    <loc>https://nanpure.meg4ne.net/medium</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://nanpure.meg4ne.net/medium"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://nanpure.meg4ne.net/medium"/>
+  </url>
+  <url>
+    <loc>https://nanpure.meg4ne.net/hard</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://nanpure.meg4ne.net/hard"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://nanpure.meg4ne.net/hard"/>
   </url>
   <url>
     <loc>https://nanpure.meg4ne.net/privacy.html</loc>

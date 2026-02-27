@@ -1,11 +1,16 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const helmet = require('helmet');
+const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const { generatePuzzle } = require('./sudoku');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// gzip圧縮
+app.use(compression());
 
 // セキュリティヘッダー
 app.use(
@@ -36,7 +41,26 @@ const puzzleRateLimiter = rateLimit({
   message: { error: 'Too many requests. Please try again later.' },
 });
 
-app.use(express.static(path.join(__dirname, '..', 'public')));
+// 静的ファイルのキャッシュ設定
+app.use(
+  express.static(path.join(__dirname, '..', 'public'), {
+    maxAge: '7d',
+    setHeaders: (res, filePath) => {
+      // HTMLは短いキャッシュ（コンテンツ更新を早く反映）
+      if (filePath.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+      }
+      // CSS/JSは長めのキャッシュ
+      if (filePath.endsWith('.css') || filePath.endsWith('.js')) {
+        res.setHeader('Cache-Control', 'public, max-age=604800');
+      }
+      // 画像は長めのキャッシュ
+      if (filePath.match(/\.(png|jpg|jpeg|gif|ico|svg|webp)$/)) {
+        res.setHeader('Cache-Control', 'public, max-age=2592000');
+      }
+    },
+  }),
+);
 
 // パズル生成API
 app.get('/api/puzzle', puzzleRateLimiter, (req, res) => {
@@ -54,6 +78,195 @@ app.get('/api/puzzle', puzzleRateLimiter, (req, res) => {
   }
 });
 
+// === 難易度別ランディングページ ===
+const DIFFICULTY_META = {
+  easy: {
+    ja: {
+      title: 'ナンプレ 初級 - 無料で遊べる簡単な数独パズル | Easy Sudoku',
+      description: 'ナンプレ初級（Easy）。ヒント36〜40個で初心者にもやさしい数独パズル。無料でブラウザからすぐに遊べます。',
+      h1: 'ナンプレ 初級',
+      subtitle: '初心者向け・無料オンライン数独パズル',
+      keywords: 'ナンプレ 初級,数独 簡単,Sudoku easy,初心者,ナンプレ 入門,無料',
+      content: 'ナンプレ初級は、ヒントが36〜40個と多いため、初めての方でも安心して楽しめます。基本的な消去法（ネイキッドシングル）だけで解ける問題がほとんどです。まずは初級で数独の基本ルールに慣れましょう。',
+    },
+    en: {
+      title: 'Nanpure Easy - Free Beginner Sudoku Puzzle',
+      description: 'Play easy Sudoku puzzles online for free. 36-40 hints make it perfect for beginners. No registration required.',
+      h1: 'Nanpure Easy',
+      subtitle: 'Beginner-friendly Free Online Sudoku',
+      keywords: 'easy sudoku,beginner sudoku,simple sudoku,free sudoku easy',
+      content: 'Easy mode features 36-40 hints, making it perfect for beginners. Most puzzles can be solved using basic naked singles technique. Start here to learn the fundamentals of Sudoku.',
+    },
+  },
+  medium: {
+    ja: {
+      title: 'ナンプレ 中級 - 無料で遊べるオンライン数独パズル | Medium Sudoku',
+      description: 'ナンプレ中級（Medium）。ヒント28〜32個で程よい難しさの数独パズル。無料でブラウザからすぐに遊べます。',
+      h1: 'ナンプレ 中級',
+      subtitle: '程よい難しさ・無料オンライン数独パズル',
+      keywords: 'ナンプレ 中級,数独 中級,Sudoku medium,ナンプレ 普通,無料',
+      content: 'ナンプレ中級は、ヒントが28〜32個。ネイキッドシングルに加え、ヒドゥンシングルなどのテクニックも必要になります。初級に慣れた方におすすめの、程よいチャレンジが楽しめる難易度です。',
+    },
+    en: {
+      title: 'Nanpure Medium - Free Intermediate Sudoku Puzzle',
+      description: 'Play medium difficulty Sudoku puzzles online for free. 28-32 hints for a balanced challenge. No registration required.',
+      h1: 'Nanpure Medium',
+      subtitle: 'Balanced Challenge - Free Online Sudoku',
+      keywords: 'medium sudoku,intermediate sudoku,sudoku puzzle,free sudoku',
+      content: 'Medium mode features 28-32 hints. You\'ll need techniques beyond naked singles, including hidden singles. A perfect step up from easy mode for a balanced challenge.',
+    },
+  },
+  hard: {
+    ja: {
+      title: 'ナンプレ 上級 - 無料で遊べる難しい数独パズル | Hard Sudoku',
+      description: 'ナンプレ上級（Hard）。ヒント22〜26個の高難度数独パズル。上級テクニックが必要。無料でブラウザからすぐに遊べます。',
+      h1: 'ナンプレ 上級',
+      subtitle: '高難度・無料オンライン数独パズル',
+      keywords: 'ナンプレ 上級,数独 難しい,Sudoku hard,上級者向け,ナンプレ 上級者,無料',
+      content: 'ナンプレ上級は、ヒントが22〜26個と少なく、高度な解法テクニックが求められます。ネイキッドペアやポインティングペアなどの応用テクニックを駆使して解く、やりがいのある問題です。',
+    },
+    en: {
+      title: 'Nanpure Hard - Free Expert Sudoku Puzzle',
+      description: 'Play hard Sudoku puzzles online for free. Only 22-26 hints for expert players. Advanced techniques required.',
+      h1: 'Nanpure Hard',
+      subtitle: 'Expert Level - Free Online Sudoku',
+      keywords: 'hard sudoku,expert sudoku,difficult sudoku,advanced sudoku,free',
+      content: 'Hard mode features only 22-26 hints, requiring advanced techniques like naked pairs and pointing pairs. A rewarding challenge for experienced Sudoku players.',
+    },
+  },
+};
+
+// index.html テンプレートをキャッシュ
+let indexTemplate = null;
+function getIndexTemplate() {
+  if (!indexTemplate) {
+    indexTemplate = fs.readFileSync(path.join(__dirname, '..', 'public', 'index.html'), 'utf8');
+  }
+  return indexTemplate;
+}
+
+function generateDifficultyPage(diff) {
+  const meta = DIFFICULTY_META[diff];
+  const template = getIndexTemplate();
+  const baseUrl = 'https://nanpure.meg4ne.net';
+
+  // JSON-LDの難易度別データ
+  const breadcrumbJson = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ナンプレ', item: `${baseUrl}/` },
+      { '@type': 'ListItem', position: 2, name: meta.ja.h1, item: `${baseUrl}/${diff}` },
+    ],
+  });
+
+  // 難易度ページ専用のSEOコンテンツ
+  const difficultySection = `
+        <!-- 難易度別SEOコンテンツ -->
+        <section class="seo-content seo-difficulty-page" aria-label="${meta.ja.h1}">
+          <h2 data-i18n="diffPageTitle">${meta.ja.h1}について</h2>
+          <p data-i18n="diffPageContent">${meta.ja.content}</p>
+          <p class="diff-page-links">
+            <span data-i18n="otherDifficulties">他の難易度：</span>
+            ${diff !== 'easy' ? '<a href="/easy" data-i18n="easyLink">初級</a>' : '<strong data-i18n="easy">初級</strong>'}
+            ${diff !== 'medium' ? '<a href="/medium" data-i18n="mediumLink">中級</a>' : '<strong data-i18n="medium">中級</strong>'}
+            ${diff !== 'hard' ? '<a href="/hard" data-i18n="hardLink">上級</a>' : '<strong data-i18n="hard">上級</strong>'}
+          </p>
+        </section>`;
+
+  let page = template;
+  // title
+  page = page.replace(
+    /<title>[^<]+<\/title>/,
+    `<title>${meta.ja.title}</title>`,
+  );
+  // meta description
+  page = page.replace(
+    /<meta\s+name="description"\s+content="[^"]*"\s*\/>/,
+    `<meta name="description" content="${meta.ja.description}" />`,
+  );
+  // meta keywords
+  page = page.replace(
+    /<meta\s+name="keywords"\s+content="[^"]*"\s*\/>/,
+    `<meta name="keywords" content="${meta.ja.keywords}" />`,
+  );
+  // canonical
+  page = page.replace(
+    /<link rel="canonical" href="[^"]*"\s*\/>/,
+    `<link rel="canonical" href="${baseUrl}/${diff}" />`,
+  );
+  // og:url
+  page = page.replace(
+    /<meta property="og:url" content="[^"]*"\s*\/>/,
+    `<meta property="og:url" content="${baseUrl}/${diff}" />`,
+  );
+  // og:title
+  page = page.replace(
+    /<meta property="og:title" content="[^"]*"\s*\/>/,
+    `<meta property="og:title" content="${meta.ja.title}" />`,
+  );
+  // og:description
+  page = page.replace(
+    /<meta property="og:description"\s+content="[^"]*"\s*\/>/,
+    `<meta property="og:description" content="${meta.ja.description}" />`,
+  );
+  // BreadcrumbList (JSON-LD)
+  page = page.replace(
+    /<!-- 構造化データ: BreadcrumbList -->[\s\S]*?<\/script>/,
+    `<!-- 構造化データ: BreadcrumbList -->\n    <script type="application/ld+json">${breadcrumbJson}</script>`,
+  );
+  // 難易度ボタンのactive状態を設定
+  const activeMap = { easy: 0, medium: 1, hard: 2 };
+  page = page.replace(
+    /(<button class="start-diff-btn)(?: active)?(" data-diff="easy")/,
+    `$1${diff === 'easy' ? ' active' : ''}$2`,
+  );
+  page = page.replace(
+    /(<button class="start-diff-btn)(?: active)?(" data-diff="medium")/,
+    `$1${diff === 'medium' ? ' active' : ''}$2`,
+  );
+  page = page.replace(
+    /(<button class="start-diff-btn)(?: active)?(" data-diff="hard")/,
+    `$1${diff === 'hard' ? ' active' : ''}$2`,
+  );
+  // ゲーム画面のdifficultyボタンも同期
+  page = page.replace(
+    /(<button class="diff-btn)(?: active)?(" data-diff="easy")/,
+    `$1${diff === 'easy' ? ' active' : ''}$2`,
+  );
+  page = page.replace(
+    /(<button class="diff-btn)(?: active)?(" data-diff="medium")/,
+    `$1${diff === 'medium' ? ' active' : ''}$2`,
+  );
+  page = page.replace(
+    /(<button class="diff-btn)(?: active)?(" data-diff="hard")/,
+    `$1${diff === 'hard' ? ' active' : ''}$2`,
+  );
+  // 難易度別SEOセクションをスタート画面のルール前に挿入
+  page = page.replace(
+    '<!-- ルール・遊び方 -->',
+    `${difficultySection}\n\n        <!-- ルール・遊び方 -->`,
+  );
+  // data-difficulty属性をbodyに追加（JSで初期難易度を取得するため）
+  page = page.replace('<body>', `<body data-difficulty="${diff}">`);
+
+  return page;
+}
+
+// 難易度別ページルーティング
+app.get('/easy', (req, res) => {
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.type('html').send(generateDifficultyPage('easy'));
+});
+app.get('/medium', (req, res) => {
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.type('html').send(generateDifficultyPage('medium'));
+});
+app.get('/hard', (req, res) => {
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.type('html').send(generateDifficultyPage('hard'));
+});
+
 // 未定義APIルートの404ハンドラ
 app.use('/api', (req, res) => {
   res.status(404).json({ error: 'Not found' });
@@ -65,6 +278,17 @@ app.use((err, req, res, _next) => {
   // eslint-disable-next-line no-console
   console.error('Unhandled error:', err);
   res.status(500).json({ error: 'Internal server error' });
+});
+
+// HTML 404ページ（APIルート以外）
+app.use((req, res) => {
+  const notFoundPage = path.join(__dirname, '..', 'public', '404.html');
+  res.status(404);
+  if (req.accepts('html')) {
+    res.sendFile(notFoundPage);
+  } else {
+    res.json({ error: 'Not found' });
+  }
 });
 
 // Only start server if this file is run directly (not imported for testing)
