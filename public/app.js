@@ -2,8 +2,8 @@
   // === i18n 翻訳システム ===
   const translations = {
     ja: {
-      title: 'ナンプレ',
-      subtitle: '無料オンライン数独パズル',
+      title: '無料で遊べるオンラインナンプレ（数独）',
+      subtitle: '毎日新しいパズルに挑戦しよう',
       selectDifficulty: '難易度を選んでスタート',
       easy: '初級',
       medium: '中級',
@@ -108,8 +108,8 @@
         `ナンプレ（${diff}）を${time}でクリア！ミス${miss}回\n#ナンプレ #数独 #Sudoku\nhttps://nanpure.meg4ne.net`,
     },
     en: {
-      title: 'Nanpure',
-      subtitle: 'Free Online Sudoku Puzzle',
+      title: 'Free Online Nanpure (Sudoku) Puzzle',
+      subtitle: 'Challenge a new puzzle every day',
       selectDifficulty: 'Select Difficulty & Start',
       easy: 'Easy',
       medium: 'Medium',
