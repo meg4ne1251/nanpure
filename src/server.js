@@ -136,6 +136,13 @@ const DIFFICULTY_META = {
   },
 };
 
+// 英語ホームページ用メタデータ
+const ENGLISH_HOME_META = {
+  title: 'Nanpure - Free Online Sudoku Puzzle | Play Sudoku Free',
+  description: 'Play free Sudoku puzzles online with 3 difficulty levels. Randomly generated unique puzzles every time. No registration required. Works on all devices.',
+  keywords: 'sudoku,nanpure,number place,puzzle,free,online,brain training,logic puzzle',
+};
+
 // index.html テンプレートをキャッシュ
 let indexTemplate = null;
 function getIndexTemplate() {
@@ -145,78 +152,130 @@ function getIndexTemplate() {
   return indexTemplate;
 }
 
-function generateDifficultyPage(diff) {
+// hreflang タグを正しいURLに更新
+function applyHreflang(page, diff) {
+  const baseUrl = 'https://nanpure.meg4ne.net';
+  const jaPath = diff ? `/${diff}` : '/';
+  const enPath = diff ? `/en/${diff}` : '/en/';
+
+  page = page.replace(
+    /<link rel="alternate" hreflang="ja" href="[^"]*"\s*\/>/,
+    `<link rel="alternate" hreflang="ja" href="${baseUrl}${jaPath}" />`,
+  );
+  page = page.replace(
+    /<link rel="alternate" hreflang="en" href="[^"]*"\s*\/>/,
+    `<link rel="alternate" hreflang="en" href="${baseUrl}${enPath}" />`,
+  );
+  page = page.replace(
+    /<link rel="alternate" hreflang="x-default" href="[^"]*"\s*\/>/,
+    `<link rel="alternate" hreflang="x-default" href="${baseUrl}/" />`,
+  );
+  return page;
+}
+
+function generateDifficultyPage(diff, lang = 'ja') {
   const meta = DIFFICULTY_META[diff];
   const template = getIndexTemplate();
   const baseUrl = 'https://nanpure.meg4ne.net';
+  const isEnglish = lang === 'en';
+  const langMeta = meta[lang];
+  const prefix = isEnglish ? '/en' : '';
 
   // JSON-LDの難易度別データ
+  const homeName = isEnglish ? 'Nanpure' : 'ナンプレ';
   const breadcrumbJson = JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'ナンプレ', item: `${baseUrl}/` },
-      { '@type': 'ListItem', position: 2, name: meta.ja.h1, item: `${baseUrl}/${diff}` },
+      { '@type': 'ListItem', position: 1, name: homeName, item: `${baseUrl}${prefix}/` },
+      { '@type': 'ListItem', position: 2, name: langMeta.h1, item: `${baseUrl}${prefix}/${diff}` },
     ],
   });
 
   // 難易度ページ専用のSEOコンテンツ
   const difficultySection = `
         <!-- 難易度別SEOコンテンツ -->
-        <section class="seo-content seo-difficulty-page" aria-label="${meta.ja.h1}">
-          <h2 data-i18n="diffPageTitle">${meta.ja.h1}について</h2>
-          <p data-i18n="diffPageContent">${meta.ja.content}</p>
+        <section class="seo-content seo-difficulty-page" aria-label="${langMeta.h1}">
+          <h2 data-i18n="diffPageTitle">${isEnglish ? `About ${langMeta.h1}` : `${langMeta.h1}について`}</h2>
+          <p data-i18n="diffPageContent">${langMeta.content}</p>
           <p class="diff-page-links">
-            <span data-i18n="otherDifficulties">他の難易度：</span>
-            ${diff !== 'easy' ? '<a href="/easy" data-i18n="easyLink">初級</a>' : '<strong data-i18n="easy">初級</strong>'}
-            ${diff !== 'medium' ? '<a href="/medium" data-i18n="mediumLink">中級</a>' : '<strong data-i18n="medium">中級</strong>'}
-            ${diff !== 'hard' ? '<a href="/hard" data-i18n="hardLink">上級</a>' : '<strong data-i18n="hard">上級</strong>'}
+            <span data-i18n="otherDifficulties">${isEnglish ? 'Other difficulties:' : '他の難易度：'}</span>
+            ${diff !== 'easy' ? `<a href="${prefix}/easy" data-i18n="easyLink">${isEnglish ? 'Easy' : '初級'}</a>` : `<strong data-i18n="easy">${isEnglish ? 'Easy' : '初級'}</strong>`}
+            ${diff !== 'medium' ? `<a href="${prefix}/medium" data-i18n="mediumLink">${isEnglish ? 'Medium' : '中級'}</a>` : `<strong data-i18n="medium">${isEnglish ? 'Medium' : '中級'}</strong>`}
+            ${diff !== 'hard' ? `<a href="${prefix}/hard" data-i18n="hardLink">${isEnglish ? 'Hard' : '上級'}</a>` : `<strong data-i18n="hard">${isEnglish ? 'Hard' : '上級'}</strong>`}
           </p>
         </section>`;
 
   let page = template;
+
+  // 英語ページの場合: html lang属性を変更
+  if (isEnglish) {
+    page = page.replace('<html lang="ja">', '<html lang="en">');
+  }
+
   // title
   page = page.replace(
     /<title>[^<]+<\/title>/,
-    `<title>${meta.ja.title}</title>`,
+    `<title>${langMeta.title}</title>`,
   );
   // meta description
   page = page.replace(
     /<meta\s+name="description"\s+content="[^"]*"\s*\/>/,
-    `<meta name="description" content="${meta.ja.description}" />`,
+    `<meta name="description" content="${langMeta.description}" />`,
   );
   // meta keywords
   page = page.replace(
     /<meta\s+name="keywords"\s+content="[^"]*"\s*\/>/,
-    `<meta name="keywords" content="${meta.ja.keywords}" />`,
+    `<meta name="keywords" content="${langMeta.keywords}" />`,
   );
   // canonical
   page = page.replace(
     /<link rel="canonical" href="[^"]*"\s*\/>/,
-    `<link rel="canonical" href="${baseUrl}/${diff}" />`,
+    `<link rel="canonical" href="${baseUrl}${prefix}/${diff}" />`,
   );
+  // hreflang
+  page = applyHreflang(page, diff);
   // og:url
   page = page.replace(
     /<meta property="og:url" content="[^"]*"\s*\/>/,
-    `<meta property="og:url" content="${baseUrl}/${diff}" />`,
+    `<meta property="og:url" content="${baseUrl}${prefix}/${diff}" />`,
   );
   // og:title
   page = page.replace(
     /<meta property="og:title" content="[^"]*"\s*\/>/,
-    `<meta property="og:title" content="${meta.ja.title}" />`,
+    `<meta property="og:title" content="${langMeta.title}" />`,
   );
   // og:description
   page = page.replace(
     /<meta property="og:description"\s+content="[^"]*"\s*\/>/,
-    `<meta property="og:description" content="${meta.ja.description}" />`,
+    `<meta property="og:description" content="${langMeta.description}" />`,
   );
+  // og:locale (英語ページ)
+  if (isEnglish) {
+    page = page.replace(
+      /<meta property="og:locale" content="[^"]*"\s*\/>/,
+      '<meta property="og:locale" content="en_US" />',
+    );
+    page = page.replace(
+      /<meta property="og:locale:alternate" content="[^"]*"\s*\/>/,
+      '<meta property="og:locale:alternate" content="ja_JP" />',
+    );
+    // Twitter
+    page = page.replace(
+      /<meta name="twitter:title" content="[^"]*"\s*\/>/,
+      `<meta name="twitter:title" content="${langMeta.title}" />`,
+    );
+    page = page.replace(
+      /<meta name="twitter:description"\s+content="[^"]*"\s*\/>/,
+      `<meta name="twitter:description" content="${langMeta.description}" />`,
+    );
+  }
   // BreadcrumbList (JSON-LD)
   page = page.replace(
     /<!-- 構造化データ: BreadcrumbList -->[\s\S]*?<\/script>/,
     `<!-- 構造化データ: BreadcrumbList -->\n    <script type="application/ld+json">${breadcrumbJson}</script>`,
   );
   // 難易度ボタンのactive状態を設定
-  const activeMap = { easy: 0, medium: 1, hard: 2 };
   page = page.replace(
     /(<button class="start-diff-btn)(?: active)?(" data-diff="easy")/,
     `$1${diff === 'easy' ? ' active' : ''}$2`,
@@ -247,13 +306,86 @@ function generateDifficultyPage(diff) {
     '<!-- ルール・遊び方 -->',
     `${difficultySection}\n\n        <!-- ルール・遊び方 -->`,
   );
-  // data-difficulty属性をbodyに追加（JSで初期難易度を取得するため）
-  page = page.replace('<body>', `<body data-difficulty="${diff}">`);
+  // data属性をbodyに追加
+  if (isEnglish) {
+    page = page.replace('<body>', `<body data-lang="en" data-difficulty="${diff}">`);
+  } else {
+    page = page.replace('<body>', `<body data-difficulty="${diff}">`);
+  }
 
   return page;
 }
 
-// 難易度別ページルーティング
+// 英語ホームページ生成
+function generateEnglishHomePage() {
+  let page = getIndexTemplate();
+  const baseUrl = 'https://nanpure.meg4ne.net';
+  const meta = ENGLISH_HOME_META;
+
+  // html lang
+  page = page.replace('<html lang="ja">', '<html lang="en">');
+  // title
+  page = page.replace(
+    /<title>[^<]+<\/title>/,
+    `<title>${meta.title}</title>`,
+  );
+  // meta description
+  page = page.replace(
+    /<meta\s+name="description"\s+content="[^"]*"\s*\/>/,
+    `<meta name="description" content="${meta.description}" />`,
+  );
+  // meta keywords
+  page = page.replace(
+    /<meta\s+name="keywords"\s+content="[^"]*"\s*\/>/,
+    `<meta name="keywords" content="${meta.keywords}" />`,
+  );
+  // canonical
+  page = page.replace(
+    /<link rel="canonical" href="[^"]*"\s*\/>/,
+    `<link rel="canonical" href="${baseUrl}/en/" />`,
+  );
+  // hreflang
+  page = applyHreflang(page, null);
+  // og:title
+  page = page.replace(
+    /<meta property="og:title" content="[^"]*"\s*\/>/,
+    `<meta property="og:title" content="${meta.title}" />`,
+  );
+  // og:description
+  page = page.replace(
+    /<meta property="og:description"\s+content="[^"]*"\s*\/>/,
+    `<meta property="og:description" content="${meta.description}" />`,
+  );
+  // og:url
+  page = page.replace(
+    /<meta property="og:url" content="[^"]*"\s*\/>/,
+    `<meta property="og:url" content="${baseUrl}/en/" />`,
+  );
+  // og:locale
+  page = page.replace(
+    /<meta property="og:locale" content="[^"]*"\s*\/>/,
+    '<meta property="og:locale" content="en_US" />',
+  );
+  page = page.replace(
+    /<meta property="og:locale:alternate" content="[^"]*"\s*\/>/,
+    '<meta property="og:locale:alternate" content="ja_JP" />',
+  );
+  // Twitter
+  page = page.replace(
+    /<meta name="twitter:title" content="[^"]*"\s*\/>/,
+    `<meta name="twitter:title" content="${meta.title}" />`,
+  );
+  page = page.replace(
+    /<meta name="twitter:description"\s+content="[^"]*"\s*\/>/,
+    `<meta name="twitter:description" content="${meta.description}" />`,
+  );
+  // body
+  page = page.replace('<body>', '<body data-lang="en">');
+
+  return page;
+}
+
+// 難易度別ページルーティング（日本語）
 app.get('/easy', (req, res) => {
   res.set('Cache-Control', 'public, max-age=3600');
   res.type('html').send(generateDifficultyPage('easy'));
@@ -265,6 +397,28 @@ app.get('/medium', (req, res) => {
 app.get('/hard', (req, res) => {
   res.set('Cache-Control', 'public, max-age=3600');
   res.type('html').send(generateDifficultyPage('hard'));
+});
+
+// 英語ページルーティング
+app.get('/en', (req, res) => {
+  // strict routing off では /en と /en/ 両方マッチする
+  if (req.path === '/en') {
+    return res.redirect(301, '/en/');
+  }
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.type('html').send(generateEnglishHomePage());
+});
+app.get('/en/easy', (req, res) => {
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.type('html').send(generateDifficultyPage('easy', 'en'));
+});
+app.get('/en/medium', (req, res) => {
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.type('html').send(generateDifficultyPage('medium', 'en'));
+});
+app.get('/en/hard', (req, res) => {
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.type('html').send(generateDifficultyPage('hard', 'en'));
 });
 
 // 未定義APIルートの404ハンドラ

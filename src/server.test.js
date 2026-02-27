@@ -139,4 +139,86 @@ describe('Server', () => {
       expect(res.body).toHaveProperty('error', 'Not found');
     });
   });
+
+  describe('English pages (/en/)', () => {
+    it('should serve /en/ with English content', async () => {
+      const res = await request(app).get('/en/');
+      expect(res.status).toBe(200);
+      expect(res.headers['content-type']).toMatch(/html/);
+      expect(res.text).toContain('lang="en"');
+      expect(res.text).toContain('data-lang="en"');
+      expect(res.text).toContain('Nanpure - Free Online Sudoku Puzzle');
+    });
+
+    it('should redirect /en to /en/', async () => {
+      const res = await request(app).get('/en');
+      expect(res.status).toBe(301);
+      expect(res.headers.location).toBe('/en/');
+    });
+
+    it('should serve /en/easy with English meta', async () => {
+      const res = await request(app).get('/en/easy');
+      expect(res.status).toBe(200);
+      expect(res.text).toContain('lang="en"');
+      expect(res.text).toContain('data-lang="en"');
+      expect(res.text).toContain('data-difficulty="easy"');
+      expect(res.text).toContain('Nanpure Easy');
+    });
+
+    it('should serve /en/medium with English meta', async () => {
+      const res = await request(app).get('/en/medium');
+      expect(res.status).toBe(200);
+      expect(res.text).toContain('Nanpure Medium');
+      expect(res.text).toContain('data-difficulty="medium"');
+    });
+
+    it('should serve /en/hard with English meta', async () => {
+      const res = await request(app).get('/en/hard');
+      expect(res.status).toBe(200);
+      expect(res.text).toContain('Nanpure Hard');
+      expect(res.text).toContain('data-difficulty="hard"');
+    });
+
+    it('should have correct hreflang on English homepage', async () => {
+      const res = await request(app).get('/en/');
+      expect(res.text).toContain('hreflang="ja" href="https://nanpure.meg4ne.net/"');
+      expect(res.text).toContain('hreflang="en" href="https://nanpure.meg4ne.net/en/"');
+    });
+
+    it('should have correct hreflang on English difficulty page', async () => {
+      const res = await request(app).get('/en/easy');
+      expect(res.text).toContain('hreflang="ja" href="https://nanpure.meg4ne.net/easy"');
+      expect(res.text).toContain('hreflang="en" href="https://nanpure.meg4ne.net/en/easy"');
+    });
+
+    it('should have correct canonical URL for English pages', async () => {
+      const res = await request(app).get('/en/');
+      expect(res.text).toContain('href="https://nanpure.meg4ne.net/en/"');
+    });
+
+    it('should have English difficulty links on English difficulty pages', async () => {
+      const res = await request(app).get('/en/easy');
+      expect(res.text).toContain('href="/en/medium"');
+      expect(res.text).toContain('href="/en/hard"');
+    });
+
+    it('should have en_US og:locale on English pages', async () => {
+      const res = await request(app).get('/en/');
+      expect(res.text).toContain('og:locale" content="en_US"');
+    });
+  });
+
+  describe('Hreflang on Japanese pages', () => {
+    it('should have correct hreflang on Japanese homepage', async () => {
+      const res = await request(app).get('/');
+      expect(res.text).toContain('hreflang="ja" href="https://nanpure.meg4ne.net/"');
+      expect(res.text).toContain('hreflang="en" href="https://nanpure.meg4ne.net/en/"');
+    });
+
+    it('should have correct hreflang on Japanese difficulty page', async () => {
+      const res = await request(app).get('/easy');
+      expect(res.text).toContain('hreflang="ja" href="https://nanpure.meg4ne.net/easy"');
+      expect(res.text).toContain('hreflang="en" href="https://nanpure.meg4ne.net/en/easy"');
+    });
+  });
 });

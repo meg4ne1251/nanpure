@@ -216,7 +216,10 @@
   };
 
   // === 言語管理 ===
-  let currentLang = localStorage.getItem('nanpure-lang')
+  // URLベースの言語を優先（/en/ ページは data-lang="en" がbodyに付与される）
+  const pageLang = document.body.dataset.lang || null;
+  let currentLang = pageLang
+    || localStorage.getItem('nanpure-lang')
     || ((navigator.language || navigator.userLanguage || 'ja').startsWith('ja') ? 'ja' : 'en');
   let t = translations[currentLang];
   document.documentElement.lang = currentLang;
@@ -239,14 +242,19 @@
   }
 
   function toggleLanguage() {
-    currentLang = currentLang === 'ja' ? 'en' : 'ja';
-    localStorage.setItem('nanpure-lang', currentLang);
-    t = translations[currentLang];
-    document.documentElement.lang = currentLang;
-    applyTranslations();
-    updateLangButton();
-    updateMemoButtonText();
-    updateMistakes();
+    // URLベースで言語を切り替え（SEO対応: 各言語に固有のURLを持たせる）
+    const currentPath = window.location.pathname;
+    const isOnEnglishPage = currentPath.startsWith('/en');
+
+    if (isOnEnglishPage) {
+      // 英語→日本語: /en/ プレフィックスを除去
+      const jaPath = currentPath.replace(/^\/en\/?/, '/') || '/';
+      window.location.href = jaPath;
+    } else {
+      // 日本語→英語: /en/ プレフィックスを追加
+      const enPath = currentPath === '/' ? '/en/' : '/en' + currentPath;
+      window.location.href = enPath;
+    }
   }
 
   function updateLangButton() {
