@@ -592,12 +592,15 @@ function classifyDifficulty(gradeResult) {
 
   const { maxTechniqueLevel, totalScore } = gradeResult;
 
+  // Easy: 基本テクニック（Naked/Hidden Single）のみで解ける & スコアが低い
   if (maxTechniqueLevel <= TECHNIQUE_SCORE.hiddenSingle && totalScore <= 100) {
     return 'easy';
   }
-  if (totalScore <= 70) {
+  // Medium: 基本テクニックのみ（スコア高め）、または中級テクニックでスコアが中程度
+  if (maxTechniqueLevel <= TECHNIQUE_SCORE.hiddenSingle || totalScore <= 130) {
     return 'medium';
   }
+  // Hard: 上級テクニック・バックトラックが必要、またはスコアが高い
   return 'hard';
 }
 
@@ -610,18 +613,18 @@ function classifyDifficulty(gradeResult) {
 // 生成の安定性のため、隣接難易度も許容するが、主分類を優先
 const DIFFICULTY_CONFIG = {
   easy: {
-    targetRemove: 40, // 目標除去数 → ヒント41程度
+    targetRemove: 41, // 目標除去数 → ヒント40程度
     maxRemove: 45, // 最大除去数 → ヒント36程度
     accept: ['easy'],
   },
   medium: {
-    targetRemove: 50,
-    maxRemove: 55,
+    targetRemove: 49, // 目標除去数 → ヒント32程度
+    maxRemove: 53, // 最大除去数 → ヒント28程度
     accept: ['medium'],
   },
   hard: {
-    targetRemove: 54,
-    maxRemove: 58,
+    targetRemove: 55, // 目標除去数 → ヒント26程度
+    maxRemove: 59, // 最大除去数 → ヒント22程度
     accept: ['hard', 'medium'], // hardが出にくい場合mediumも許容
   },
 };

@@ -55,6 +55,7 @@
         <h3>メモ機能</h3>
         <p>メモモードをONにすると、候補数字を小さくメモできます。メモの入力は「戻る」の対象外です。</p>`,
       memoReset: 'メモ全消去',
+      errorGeneration: 'パズルの生成に失敗しました。もう一度お試しください。',
       cookieMessage:
         'このサイトでは、広告の表示とアクセス解析のためにCookieを使用しています。詳しくは<a href="/privacy.html">プライバシーポリシー</a>をご覧ください。',
       cookieAccept: '同意する',
@@ -117,6 +118,7 @@
         <h3>Notes Mode</h3>
         <p>Turn on Notes mode to pencil in candidate numbers. Note entries are not tracked by undo.</p>`,
       memoReset: 'Clear All Notes',
+      errorGeneration: 'Failed to generate puzzle. Please try again.',
       cookieMessage:
         'This site uses cookies for advertising and analytics. See our <a href="/privacy.html">Privacy Policy</a> for details.',
       cookieAccept: 'Accept',
@@ -596,6 +598,19 @@
     saveGameToStorage();
   }
 
+  // === エラー表示 ===
+  function showError(message) {
+    const errorEl = document.createElement('div');
+    errorEl.className = 'error-toast';
+    errorEl.textContent = message;
+    errorEl.setAttribute('role', 'alert');
+    document.body.appendChild(errorEl);
+    setTimeout(() => {
+      errorEl.classList.add('fade-out');
+      setTimeout(() => errorEl.remove(), 300);
+    }, 4000);
+  }
+
   // === 新しいゲーム開始 ===
   async function startNewGame() {
     clearGameStorage();
@@ -615,6 +630,9 @@
 
     try {
       const res = await fetch(`/api/puzzle?difficulty=${difficulty}`);
+      if (!res.ok) {
+        throw new Error(`Server error: ${res.status}`);
+      }
       const data = await res.json();
       puzzle = data.puzzle;
       solution = data.solution;
@@ -640,7 +658,9 @@
         if (seconds % 30 === 0) saveGameToStorage();
       }, 1000);
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('Puzzle fetch error:', err);
+      showError(t.errorGeneration);
     } finally {
       loadingEl.classList.add('hidden');
     }
@@ -651,19 +671,25 @@
     boardEl.innerHTML = '';
     for (let r = 0; r < 9; r++) {
       const tr = document.createElement('tr');
+      tr.setAttribute('role', 'row');
       for (let c = 0; c < 9; c++) {
         const td = document.createElement('td');
         td.dataset.row = r;
         td.dataset.col = c;
+        td.setAttribute('role', 'gridcell');
+        td.setAttribute('tabindex', '-1');
+        td.setAttribute('aria-label', `Row ${r + 1}, Column ${c + 1}`);
 
         if (puzzle[r][c] !== 0) {
           td.textContent = puzzle[r][c];
           td.classList.add('given');
+          td.setAttribute('aria-readonly', 'true');
         } else if (board[r][c] !== 0) {
           td.textContent = board[r][c];
           td.classList.add('user-input');
           if (board[r][c] !== solution[r][c]) {
             td.classList.add('error');
+            td.setAttribute('aria-invalid', 'true');
           }
         } else if (memos[r][c].size > 0) {
           const memoGrid = document.createElement('div');
@@ -823,19 +849,43 @@
 
   function shareToX() {
     const text = encodeURIComponent(getShareText());
-    window.open(`https://x.com/intent/tweet?text=${text}`, '_blank');
+    window.open(`https://x.com/intent/tweet?text=${text}`, '_blank', 'noopener,noreferrer');
   }
 
   function copyResult() {
     const text = getShareText();
-    navigator.clipboard.writeText(text).then(() => {
-      const btn = document.getElementById('share-copy');
+    const btn = document.getElementById('share-copy');
+    const showCopied = () => {
       const original = btn.textContent;
       btn.textContent = t.copied;
       setTimeout(() => {
         btn.textContent = original;
       }, 2000);
-    });
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(showCopied).catch(() => {
+        fallbackCopy(text, showCopied);
+      });
+    } else {
+      fallbackCopy(text, showCopied);
+    }
+  }
+
+  function fallbackCopy(text, onSuccess) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+      onSuccess();
+    } catch (e) {
+      // コピー失敗時は何もしない
+    }
+    document.body.removeChild(textarea);
   }
 
   // タイマー

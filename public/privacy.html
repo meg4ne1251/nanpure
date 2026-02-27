@@ -95,25 +95,9 @@
   <body>
     <div class="container">
       <div class="lang-switch">
-        <a
-          href="#"
-          id="switch-ja"
-          onclick="
-            showLang('ja');
-            return false;
-          "
-          ><strong>日本語</strong></a
-        >
+        <a href="#" id="switch-ja"><strong>日本語</strong></a>
         |
-        <a
-          href="#"
-          id="switch-en"
-          onclick="
-            showLang('en');
-            return false;
-          "
-          >English</a
-        >
+        <a href="#" id="switch-en">English</a>
       </div>
 
       <!-- 日本語 -->
@@ -258,13 +242,13 @@
             <li>Google delivers ads based on user access information.</li>
             <li>
               For information about Google's data usage, please see
-              <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener"
+              <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer"
                 >Google's Advertising Policies</a
               >.
             </li>
             <li>
               You can opt out of personalized advertising in
-              <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener"
+              <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer"
                 >Google Ads Settings</a
               >.
             </li>
@@ -303,6 +287,17 @@
           lang === 'en' ? '<strong>English</strong>' : 'English';
         document.documentElement.lang = lang;
       }
+
+      // インライン onclick を addEventListener に移行
+      document.getElementById('switch-ja').addEventListener('click', function (e) {
+        e.preventDefault();
+        showLang('ja');
+      });
+      document.getElementById('switch-en').addEventListener('click', function (e) {
+        e.preventDefault();
+        showLang('en');
+      });
+
       // ブラウザ言語で自動判定
       if (!navigator.language.startsWith('ja')) {
         showLang('en');

@@ -69,11 +69,6 @@
           "@type": "Offer",
           "price": "0",
           "priceCurrency": "JPY"
-        },
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": "4.5",
-          "ratingCount": "1"
         }
       }
     </script>
@@ -161,7 +156,7 @@
         </div>
 
         <div id="board-container">
-          <table id="board"></table>
+          <table id="board" role="grid" aria-label="Sudoku board"></table>
           <div id="loading" class="hidden" data-i18n="loading">生成中...</div>
         </div>
 

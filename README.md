@@ -102,8 +102,9 @@ nanpure/
   "difficulty": "medium",
   "hints": 30,
   "grade": {
-    "techniques": ["naked_single", "hidden_single"],
-    "score": 150
+    "totalScore": 150,
+    "maxTechniqueLevel": 2,
+    "techniquesUsed": { "nakedSingle": 20, "hiddenSingle": 15 }
   }
 }
 ```

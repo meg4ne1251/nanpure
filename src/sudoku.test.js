@@ -123,6 +123,17 @@ describe('Sudoku Puzzle Generator', () => {
       expect(result).toBe('easy');
     });
 
+    it('should classify basic techniques with high score as medium (not hard)', () => {
+      // Regression: basic-only puzzles with score > 100 should NOT be "hard"
+      const result = classifyDifficulty({
+        solved: true,
+        totalScore: 120,
+        maxTechniqueLevel: 2,
+        techniquesUsed: { nakedSingle: 20, hiddenSingle: 50 },
+      });
+      expect(result).toBe('medium');
+    });
+
     it('should classify high technique levels as hard', () => {
       const result = classifyDifficulty({
         solved: true,
@@ -132,5 +143,75 @@ describe('Sudoku Puzzle Generator', () => {
       });
       expect(result).toBe('hard');
     });
+
+    it('should classify medium-level techniques with moderate score as medium', () => {
+      const result = classifyDifficulty({
+        solved: true,
+        totalScore: 100,
+        maxTechniqueLevel: 4,
+        techniquesUsed: { nakedSingle: 15, hiddenSingle: 10, nakedPairs: 5 },
+      });
+      expect(result).toBe('medium');
+    });
+  });
+
+  describe('solution validity', () => {
+    it('should produce a valid sudoku solution (rows unique 1-9)', () => {
+      const result = generatePuzzle('medium');
+      for (let r = 0; r < 9; r++) {
+        const row = result.solution[r];
+        expect(new Set(row).size).toBe(9);
+        row.forEach((val) => {
+          expect(val).toBeGreaterThanOrEqual(1);
+          expect(val).toBeLessThanOrEqual(9);
+        });
+      }
+    });
+
+    it('should produce a valid sudoku solution (columns unique 1-9)', () => {
+      const result = generatePuzzle('medium');
+      for (let c = 0; c < 9; c++) {
+        const col = result.solution.map((row) => row[c]);
+        expect(new Set(col).size).toBe(9);
+      }
+    });
+
+    it('should produce a valid sudoku solution (3x3 boxes unique 1-9)', () => {
+      const result = generatePuzzle('medium');
+      for (let br = 0; br < 9; br += 3) {
+        for (let bc = 0; bc < 9; bc += 3) {
+          const box = [];
+          for (let r = br; r < br + 3; r++) {
+            for (let c = bc; c < bc + 3; c++) {
+              box.push(result.solution[r][c]);
+            }
+          }
+          expect(new Set(box).size).toBe(9);
+        }
+      }
+    });
+  });
+
+  describe('hint count ranges', () => {
+    it('easy puzzles should have 36-45 hints', () => {
+      const result = generatePuzzle('easy');
+      const hints = result.puzzle.flat().filter((v) => v !== 0).length;
+      expect(hints).toBeGreaterThanOrEqual(36);
+      expect(hints).toBeLessThanOrEqual(45);
+    });
+
+    it('medium puzzles should have 28-40 hints', () => {
+      const result = generatePuzzle('medium');
+      const hints = result.puzzle.flat().filter((v) => v !== 0).length;
+      expect(hints).toBeGreaterThanOrEqual(28);
+      expect(hints).toBeLessThanOrEqual(45);
+    });
+
+    it('hard puzzles should have 22-35 hints', () => {
+      const result = generatePuzzle('hard');
+      const hints = result.puzzle.flat().filter((v) => v !== 0).length;
+      expect(hints).toBeGreaterThanOrEqual(22);
+      expect(hints).toBeLessThanOrEqual(40);
+    }, 15000);
   });
 });
