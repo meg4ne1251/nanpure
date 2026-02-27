@@ -332,6 +332,8 @@ h1 {
   width: 100%;
   max-width: 440px;
   aspect-ratio: 1;
+  flex-shrink: 0;
+  overflow: visible;
 }
 
 #board {
@@ -342,6 +344,10 @@ h1 {
   table-layout: fixed;
   background: #fff;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+#board tr {
+  height: calc(100% / 9);
 }
 
 #board td {

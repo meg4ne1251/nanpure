@@ -668,7 +668,12 @@
 
   // === 盤面描画 ===
   function renderBoard() {
-    boardEl.innerHTML = '';
+    // DOM を確実にクリア（innerHTML = '' はブラウザにより暗黙 tbody が残る場合がある）
+    while (boardEl.firstChild) {
+      boardEl.removeChild(boardEl.firstChild);
+    }
+    // 明示的に <tbody> を作成し、全行をその中に配置する
+    const tbody = document.createElement('tbody');
     for (let r = 0; r < 9; r++) {
       const tr = document.createElement('tr');
       tr.setAttribute('role', 'row');
@@ -705,8 +710,9 @@
         td.addEventListener('click', () => selectCell(r, c));
         tr.appendChild(td);
       }
-      boardEl.appendChild(tr);
+      tbody.appendChild(tr);
     }
+    boardEl.appendChild(tbody);
     updateHighlight();
     updateNumpadState();
   }
