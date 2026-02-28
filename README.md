@@ -25,6 +25,20 @@
 - **SEO最適化** - robots.txt、sitemap.xml、hreflang、構造化データ対応
 - **Google AdSense対応** - 広告スロット実装（ブラウザ言語に応じて自動配信）
 - **GDPR対応** - Cookie同意バナー、プライバシーポリシーページ
+- **Google Analytics 4** - Cookie同意後にカスタムイベント計測（ゲーム開始/クリア/シェア）
+
+### ダークモード
+
+- **自動検出** - OS/ブラウザの `prefers-color-scheme` 設定に自動追従
+- **手動切替** - ヘッダーのトグルボタンで切替、設定は `localStorage` に保存
+- **全UI対応** - ゲーム盤面・モーダル・Cookie同意バナーまで全要素がダークモードに対応
+
+### パフォーマンス最適化
+
+- **CSS/JSのminify** - esbuildによるビルドステップでアセットを圧縮（約25%削減）
+- **コンテンツハッシュ** - ファイル名にハッシュを含め、長期キャッシュ + 即時反映
+- **gzip圧縮** - サーバーサイドでレスポンスを自動圧縮
+- **最適化されたキャッシュ戦略** - 静的アセットは1年キャッシュ（immutable）
 
 ## キーボードショートカット
 
@@ -67,10 +81,13 @@ nanpure/
 ├── public/
 │   ├── index.html        # メインHTML（i18n、SEO、AdSense対応）
 │   ├── privacy.html      # プライバシーポリシー（日英両対応）
-│   ├── style.css         # スタイルシート
-│   ├── app.js            # フロントエンドロジック（i18n、Cookie同意）
+│   ├── style.css         # スタイルシート（CSS変数によるダークモード対応）
+│   ├── app.js            # フロントエンドロジック（i18n、Cookie同意、GA4、ダークモード）
 │   ├── robots.txt        # 検索エンジン用クローラー制御
 │   └── sitemap.xml       # XML サイトマップ（hreflang対応）
+├── scripts/
+│   └── build.js          # CSS/JS minifyビルドスクリプト
+├── dist/                 # ビルド出力（minifyされたCSS/JS）
 ├── src/
 │   ├── server.js         # Express APIサーバー
 │   ├── sudoku.js         # パズル生成エンジン
@@ -135,7 +152,18 @@ data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX"
 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX"
 ```
 
-### 2. OG イメージの作成
+### 2. Google Analytics 4 の設定
+
+`public/app.js` 内の測定IDを実際の値に置き換えてください：
+
+```javascript
+// app.js 内
+const GA_MEASUREMENT_ID = 'G-XXXXXXXXXX'; // ← GA4の測定IDに置き換え
+```
+
+GA4はCookie同意後にのみ読み込まれます。
+
+### 3. OG イメージの作成
 
 ソーシャルメディア共有用に、以下の OG 画像を作成して配置してください：
 
@@ -143,20 +171,20 @@ data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX"
 - **サイズ:** 1200×630px
 - **推奨:** ゲームスクリーンショットまたはロゴ
 
-### 3. Google Search Console への登録
+### 4. Google Search Console への登録
 
 1. [Google Search Console](https://search.google.com/search-console) に登録
 2. ドメイン所有権を確認
 3. `public/sitemap.xml` を登録
 4. URL検査ツールでインデックス登録をリクエスト
 
-### 4. Google AdSense 審査
+### 5. Google AdSense 審査
 
 1. サイトを公開してから AdSense に申請
 2. このリポジトリにはプライバシーポリシー（`public/privacy.html`）が含まれています
 3. Cookie同意バナーも実装済みです
 
-### 5. ドメインの指定
+### 6. ドメインの指定
 
 現在、canonical URLは `https://nanpure.meg4ne.net/` に設定されています。
 実際のドメインが異なる場合は、以下を更新してください：
@@ -179,8 +207,10 @@ https://nanpure.meg4ne.net/ → あなたのドメイン
 - **バックエンド:** Node.js + Express
 - **パズル生成:** バックトラッキング + 唯一解検証アルゴリズム
 - **多言語対応:** i18n システム（日本語/英語）
+- **ビルド:** esbuild（CSS/JS minify）
 - **デプロイ:** Docker
 - **CI/CD:** GitHub Actions（テスト、リント、パフォーマンス監視）
+- **解析:** Google Analytics 4（Cookie同意後に計測）
 
 ## テスト & リント
 
@@ -193,6 +223,9 @@ npm run test:watch
 
 # カバレッジレポート
 npm run test:coverage
+
+# 本番用ビルド（CSS/JS minify）
+npm run build
 
 # ESLint + Prettier でコード品質チェック
 npm run lint

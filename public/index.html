@@ -169,6 +169,7 @@
         </nav>
         <div class="header-title-row">
           <h1 data-i18n="title">無料で遊べるオンラインナンプレ（数独）</h1>
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">☀️</button>
           <button id="lang-toggle" class="lang-btn">EN</button>
         </div>
         <p class="subtitle" data-i18n="subtitle">毎日新しいパズルに挑戦しよう</p>
@@ -390,6 +391,14 @@
             <button id="share-copy" class="btn-share btn-share-copy" data-i18n="copyResult">
               結果をコピー
             </button>
+          </div>
+          <div id="complete-difficulty-select">
+            <p class="complete-diff-label" data-i18n="nextDifficulty">次の難易度</p>
+            <div class="complete-diff-buttons">
+              <button class="complete-diff-btn" data-diff="easy" data-i18n="easy">初級</button>
+              <button class="complete-diff-btn" data-diff="medium" data-i18n="medium">中級</button>
+              <button class="complete-diff-btn" data-diff="hard" data-i18n="hard">上級</button>
+            </div>
           </div>
           <button id="play-again" class="btn-primary" data-i18n="playAgain">もう一度プレイ</button>
         </div>

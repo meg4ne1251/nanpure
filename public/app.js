@@ -29,6 +29,7 @@
       copyResult: '結果をコピー',
       copied: 'コピーしました！',
       playAgain: 'もう一度プレイ',
+      nextDifficulty: '次の難易度',
       mistakes: 'ミス',
       difficultyLabel: '難易度',
       timeLabel: 'タイム',
@@ -135,6 +136,7 @@
       copyResult: 'Copy Result',
       copied: 'Copied!',
       playAgain: 'Play Again',
+      nextDifficulty: 'Next Difficulty',
       mistakes: 'Mistakes',
       difficultyLabel: 'Difficulty',
       timeLabel: 'Time',
@@ -223,6 +225,80 @@
     || ((navigator.language || navigator.userLanguage || 'ja').startsWith('ja') ? 'ja' : 'en');
   let t = translations[currentLang];
   document.documentElement.lang = currentLang;
+
+  // === ダークモード管理 ===
+  function getPreferredTheme() {
+    const saved = localStorage.getItem('nanpure-theme');
+    if (saved === 'dark' || saved === 'light') return saved;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('nanpure-theme', theme);
+    // テーマトグルボタンのアイコン更新
+    const btn = document.getElementById('theme-toggle');
+    if (btn) {
+      btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+      btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    // meta theme-color を動的に更新
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+      metaTheme.setAttribute('content', theme === 'dark' ? '#1a1a2e' : '#1a1a1a');
+    }
+  }
+
+  function setupThemeToggle() {
+    const btn = document.getElementById('theme-toggle');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || getPreferredTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        trackEvent('theme_toggle', { theme: next });
+      });
+    }
+    // OS設定の変更を監視
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      // ユーザーが手動設定していない場合のみ追従
+      if (!localStorage.getItem('nanpure-theme')) {
+        applyTheme(e.matches ? 'dark' : 'light');
+      }
+    });
+  }
+
+  // 初期テーマ適用（FOUC防止: なるべく早く実行）
+  applyTheme(getPreferredTheme());
+
+  // === Google Analytics 4 ===
+  function initGA4() {
+    // GA4測定IDを設定してください
+    const GA_MEASUREMENT_ID = 'G-XXXXXXXXXX';
+    if (GA_MEASUREMENT_ID === 'G-XXXXXXXXXX') return; // 未設定時はスキップ
+
+    // gtag.js を非同期読み込み
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+    document.head.appendChild(script);
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { window.dataLayer.push(arguments); }
+    window.gtag = gtag;
+    gtag('js', new Date());
+    gtag('config', GA_MEASUREMENT_ID, {
+      send_page_view: true,
+      cookie_flags: 'SameSite=None;Secure',
+    });
+  }
+
+  // GA4カスタムイベント送信
+  function trackEvent(eventName, params) {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', eventName, params);
+    }
+  }
 
   function applyTranslations() {
     document.querySelectorAll('[data-i18n]').forEach((el) => {
@@ -341,6 +417,7 @@
     applyTranslations();
     updateLangButton();
     setupLangToggle();
+    setupThemeToggle();
     setupCookieConsent();
     setupStartScreen();
     setupDifficultyButtons();
@@ -357,6 +434,7 @@
       completeModal.classList.add('hidden');
       startNewGame();
     });
+    setupCompleteDifficultyButtons();
 
     // 保存済みゲームがあれば続きボタンを表示
     const savedGame = loadGameFromStorage();
@@ -366,19 +444,38 @@
     }
   }
 
+  // === クリアモーダル内の難易度選択 ===
+  function setupCompleteDifficultyButtons() {
+    document.querySelectorAll('.complete-diff-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.complete-diff-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        difficulty = btn.dataset.diff;
+        syncDifficultyButtons();
+      });
+    });
+  }
+
+  function syncCompleteDifficultyButtons() {
+    document.querySelectorAll('.complete-diff-btn').forEach((b) => {
+      b.classList.toggle('active', b.dataset.diff === difficulty);
+    });
+  }
+
   // === 言語トグル ===
   function setupLangToggle() {
     const btn = document.getElementById('lang-toggle');
     if (btn) btn.addEventListener('click', toggleLanguage);
   }
 
-  // === Cookie同意 & AdSense ===
+  // === Cookie同意 & AdSense & GA4 ===
   function setupCookieConsent() {
     const consentBanner = document.getElementById('cookie-consent');
     const acceptBtn = document.getElementById('cookie-accept');
 
     if (localStorage.getItem('cookie-consent') === 'accepted') {
       loadAdSense();
+      initGA4();
       return;
     }
 
@@ -387,6 +484,7 @@
       localStorage.setItem('cookie-consent', 'accepted');
       consentBanner.classList.add('hidden');
       loadAdSense();
+      initGA4();
     });
   }
 
@@ -747,6 +845,8 @@
       gameActive = true;
       saveGameToStorage();
 
+      trackEvent('game_start', { difficulty });
+
       timerInterval = setInterval(() => {
         seconds++;
         updateTimer();
@@ -933,7 +1033,14 @@
     completeDifficulty.textContent = `${t.difficultyLabel}: ${getDifficultyLabel(difficulty)}`;
     completeTime.textContent = `${t.timeLabel}: ${formatTime(seconds)}`;
     completeMistakes.textContent = `${t.mistakesLabel}: ${mistakes}${t.mistakesCount}`;
+    syncCompleteDifficultyButtons();
     completeModal.classList.remove('hidden');
+
+    trackEvent('game_complete', {
+      difficulty,
+      time_seconds: seconds,
+      mistakes,
+    });
   }
 
   // シェア機能
@@ -951,6 +1058,7 @@
   function shareToX() {
     const text = encodeURIComponent(getShareText());
     window.open(`https://x.com/intent/tweet?text=${text}`, '_blank', 'noopener,noreferrer');
+    trackEvent('share', { method: 'x', difficulty });
   }
 
   function copyResult() {
@@ -959,6 +1067,7 @@
     const showCopied = () => {
       const original = btn.textContent;
       btn.textContent = t.copied;
+      trackEvent('share', { method: 'copy', difficulty });
       setTimeout(() => {
         btn.textContent = original;
       }, 2000);

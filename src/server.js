@@ -8,6 +8,14 @@ const { generatePuzzle } = require('./sudoku');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+
+// ビルド済みアセットのマニフェスト読み込み
+let assetManifest = {};
+const manifestPath = path.join(__dirname, '..', 'dist', 'manifest.json');
+if (IS_PRODUCTION && fs.existsSync(manifestPath)) {
+  assetManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+}
 
 // gzip圧縮
 app.use(compression());
@@ -22,11 +30,26 @@ app.use(
           "'self'",
           "'unsafe-inline'",
           'https://pagead2.googlesyndication.com',
+          'https://www.googletagmanager.com',
+          'https://www.google-analytics.com',
         ],
         styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", 'data:', 'https:'],
+        imgSrc: [
+          "'self'",
+          'data:',
+          'https:',
+          'https://www.google-analytics.com',
+          'https://www.googletagmanager.com',
+        ],
         frameSrc: ['https://googleads.g.doubleclick.net', 'https://tpc.googlesyndication.com'],
-        connectSrc: ["'self'", 'https://pagead2.googlesyndication.com'],
+        connectSrc: [
+          "'self'",
+          'https://pagead2.googlesyndication.com',
+          'https://www.google-analytics.com',
+          'https://www.googletagmanager.com',
+          'https://*.google-analytics.com',
+          'https://*.analytics.google.com',
+        ],
       },
     },
   }),
@@ -40,6 +63,20 @@ const puzzleRateLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: 'Too many requests. Please try again later.' },
 });
+
+// 本番環境: dist/からminifyされたアセットを配信（長期キャッシュ）
+if (IS_PRODUCTION && fs.existsSync(path.join(__dirname, '..', 'dist'))) {
+  app.use(
+    '/assets',
+    express.static(path.join(__dirname, '..', 'dist'), {
+      maxAge: '1y',
+      immutable: true,
+      setHeaders: (res) => {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      },
+    }),
+  );
+}
 
 // 静的ファイルのキャッシュ設定
 app.use(
@@ -147,7 +184,23 @@ const ENGLISH_HOME_META = {
 let indexTemplate = null;
 function getIndexTemplate() {
   if (!indexTemplate) {
-    indexTemplate = fs.readFileSync(path.join(__dirname, '..', 'public', 'index.html'), 'utf8');
+    let html = fs.readFileSync(path.join(__dirname, '..', 'public', 'index.html'), 'utf8');
+
+    // 本番環境: minifyされたアセットに差し替え
+    if (IS_PRODUCTION && assetManifest['style.css']) {
+      html = html.replace(
+        '<link rel="stylesheet" href="style.css" />',
+        `<link rel="stylesheet" href="/assets/${assetManifest['style.css']}" />`,
+      );
+    }
+    if (IS_PRODUCTION && assetManifest['app.js']) {
+      html = html.replace(
+        '<script src="app.js"></script>',
+        `<script src="/assets/${assetManifest['app.js']}"></script>`,
+      );
+    }
+
+    indexTemplate = html;
   }
   return indexTemplate;
 }
