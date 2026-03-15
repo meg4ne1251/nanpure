@@ -81,6 +81,7 @@ async function getPuzzle(difficulty) {
 
 // サーバー起動時にすべての難易度のプールを初期充填
 function initPools() {
+  stopped = false;
   // eslint-disable-next-line no-console
   console.log('パズルプール初期化開始...');
   for (const diff of DIFFICULTIES) {

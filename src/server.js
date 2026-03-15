@@ -488,14 +488,6 @@ app.use('/api', (req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
 
-// グローバルエラーハンドラ
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, _next) => {
-  // eslint-disable-next-line no-console
-  console.error('Unhandled error:', err);
-  res.status(500).json({ error: 'Internal server error' });
-});
-
 // HTML 404ページ（APIルート以外）
 app.use((req, res) => {
   const notFoundPage = path.join(__dirname, '..', 'public', '404.html');
@@ -505,6 +497,14 @@ app.use((req, res) => {
   } else {
     res.json({ error: 'Not found' });
   }
+});
+
+// グローバルエラーハンドラ（404ハンドラ含む全ミドルウェアのエラーを捕捉するため最後に配置）
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, _next) => {
+  // eslint-disable-next-line no-console
+  console.error('Unhandled error:', err);
+  res.status(500).json({ error: 'Internal server error' });
 });
 
 // Only start server if this file is run directly (not imported for testing)
