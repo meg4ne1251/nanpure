@@ -132,13 +132,13 @@ app.use(
 );
 
 // パズル生成API
-app.get('/api/puzzle', puzzleRateLimiter, (req, res) => {
+app.get('/api/puzzle', puzzleRateLimiter, async (req, res) => {
   const difficulty = req.query.difficulty || 'medium';
   if (!['easy', 'medium', 'hard'].includes(difficulty)) {
     return res.status(400).json({ error: 'Invalid difficulty. Use: easy, medium, hard' });
   }
   try {
-    const result = getPuzzle(difficulty);
+    const result = await getPuzzle(difficulty);
     return res.json(result);
   } catch (err) {
     // eslint-disable-next-line no-console

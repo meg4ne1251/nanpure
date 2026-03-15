@@ -1,8 +1,9 @@
-const { generatePuzzle } = require('./sudoku');
+const { Worker } = require('worker_threads');
+const path = require('path');
 
 const DIFFICULTIES = ['easy', 'medium', 'hard'];
-const POOL_SIZE = 20;
-const REFILL_THRESHOLD = 10;
+const POOL_SIZE = 15;
+const REFILL_THRESHOLD = 7;
 
 // 難易度ごとのパズルプール
 const pools = {
@@ -21,38 +22,48 @@ const refilling = {
 // 停止フラグ
 let stopped = false;
 
-// 1つのパズルをバックグラウンドで生成してプールに追加
-function generateOne(difficulty) {
-  return new Promise((resolve) => {
-    setImmediate(() => {
-      try {
-        const puzzle = generatePuzzle(difficulty);
-        pools[difficulty].push(puzzle);
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error(`Pool: ${difficulty} puzzle generation failed:`, err.message);
+// Workerスレッドでパズルを1つ生成
+function generateOneInWorker(difficulty) {
+  return new Promise((resolve, reject) => {
+    const worker = new Worker(path.join(__dirname, 'puzzleWorker.js'));
+    worker.on('message', (msg) => {
+      worker.terminate();
+      if (msg.error) {
+        reject(new Error(msg.error));
+      } else {
+        resolve(msg.result);
       }
-      resolve();
     });
+    worker.on('error', (err) => {
+      worker.terminate();
+      reject(err);
+    });
+    worker.postMessage(difficulty);
   });
 }
 
-// プールを補充（非同期・ノンブロッキング）
+// プールを補充（Workerスレッドで非同期・ノンブロッキング）
 async function refillPool(difficulty) {
   if (refilling[difficulty]) return;
   refilling[difficulty] = true;
 
   try {
     while (pools[difficulty].length < POOL_SIZE && !stopped) {
-      await generateOne(difficulty);
+      try {
+        const puzzle = await generateOneInWorker(difficulty);
+        pools[difficulty].push(puzzle);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error(`Pool: ${difficulty} puzzle generation failed:`, err.message);
+      }
     }
   } finally {
     refilling[difficulty] = false;
   }
 }
 
-// プールからパズルを取得（プールが空ならオンデマンド生成にフォールバック）
-function getPuzzle(difficulty) {
+// プールからパズルを取得（プールが空ならWorkerで生成にフォールバック）
+async function getPuzzle(difficulty) {
   const puzzle = pools[difficulty].shift();
 
   // プールが閾値以下になったらバックグラウンド補充開始
@@ -64,8 +75,8 @@ function getPuzzle(difficulty) {
     return puzzle;
   }
 
-  // プールが空の場合はオンデマンド生成（従来どおり）
-  return generatePuzzle(difficulty);
+  // プールが空の場合はWorkerスレッドで生成（メインスレッドをブロックしない）
+  return generateOneInWorker(difficulty);
 }
 
 // サーバー起動時にすべての難易度のプールを初期充填
