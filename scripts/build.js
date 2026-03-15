@@ -5,6 +5,7 @@
  * - public/app.js → dist/app.min.js
  * - コンテンツハッシュ付きファイル名でキャッシュバスティング
  */
+// eslint-disable-next-line import/no-extraneous-dependencies
 const esbuild = require('esbuild');
 const fs = require('fs');
 const path = require('path');
@@ -58,8 +59,11 @@ async function build() {
   const origCssSize = fs.statSync(path.join(PUBLIC_DIR, 'style.css')).size;
   const origJsSize = fs.statSync(path.join(PUBLIC_DIR, 'app.js')).size;
 
+  // eslint-disable-next-line no-console
   console.log('Build complete!');
+  // eslint-disable-next-line no-console
   console.log(`  CSS: ${(origCssSize / 1024).toFixed(1)}KB → ${(cssContent.length / 1024).toFixed(1)}KB (${cssFileName})`);
+  // eslint-disable-next-line no-console
   console.log(`  JS:  ${(origJsSize / 1024).toFixed(1)}KB → ${(jsContent.length / 1024).toFixed(1)}KB (${jsFileName})`);
 }
 

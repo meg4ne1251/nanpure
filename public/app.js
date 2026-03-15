@@ -22,6 +22,7 @@
       redo: '↪ 進む',
       confirm: '確認',
       confirmMessage: '現在のゲームを中断して新しいゲームを始めますか？',
+      langChangeMessage: '言語を変更すると現在のゲームが中断されます。よろしいですか？',
       yes: 'はい',
       no: 'いいえ',
       cleared: 'クリア！',
@@ -62,6 +63,7 @@
       cookieAccept: '同意する',
       footerName: 'ナンプレ - 無料オンライン数独パズル',
       privacyPolicy: 'プライバシーポリシー',
+      bugReport: 'バグ報告',
       breadcrumbHome: 'ナンプレ',
       aboutTitle: 'ナンプレ（数独）とは',
       aboutText1:
@@ -106,7 +108,7 @@
       mediumLink: '中級',
       hardLink: '上級',
       shareText: (diff, time, miss) =>
-        `ナンプレ（${diff}）を${time}でクリア！ミス${miss}回\n#ナンプレ #数独 #Sudoku\nhttps://nanpure.meg4ne.net`,
+        `ナンプレ（${diff}）を${time}でクリア！ミス${miss}回\n#ナンプレ #数独 #Sudoku\n${window.location.origin}`,
     },
     en: {
       title: 'Free Online Nanpure (Sudoku) Puzzle',
@@ -129,6 +131,7 @@
       redo: '↪ Redo',
       confirm: 'Confirm',
       confirmMessage: 'Abandon current game and start a new one?',
+      langChangeMessage: 'Changing language will end your current game. Continue?',
       yes: 'Yes',
       no: 'No',
       cleared: 'Complete!',
@@ -169,6 +172,7 @@
       cookieAccept: 'Accept',
       footerName: 'Nanpure - Free Online Sudoku Puzzle',
       privacyPolicy: 'Privacy Policy',
+      bugReport: 'Bug Report',
       breadcrumbHome: 'Nanpure',
       aboutTitle: 'What is Nanpure (Sudoku)?',
       aboutText1:
@@ -213,17 +217,17 @@
       mediumLink: 'Medium',
       hardLink: 'Hard',
       shareText: (diff, time, miss) =>
-        `Nanpure Sudoku (${diff}) cleared in ${time}! Mistakes: ${miss}\n#Nanpure #Sudoku\nhttps://nanpure.meg4ne.net`,
+        `Nanpure Sudoku (${diff}) cleared in ${time}! Mistakes: ${miss}\n#Nanpure #Sudoku\n${window.location.origin}`,
     },
   };
 
   // === 言語管理 ===
   // URLベースの言語を優先（/en/ ページは data-lang="en" がbodyに付与される）
   const pageLang = document.body.dataset.lang || null;
-  let currentLang = pageLang
+  const currentLang = pageLang
     || localStorage.getItem('nanpure-lang')
     || ((navigator.language || navigator.userLanguage || 'ja').startsWith('ja') ? 'ja' : 'en');
-  let t = translations[currentLang];
+  const t = translations[currentLang];
   document.documentElement.lang = currentLang;
 
   // === ダークモード管理 ===
@@ -284,7 +288,7 @@
     document.head.appendChild(script);
 
     window.dataLayer = window.dataLayer || [];
-    function gtag() { window.dataLayer.push(arguments); }
+    function gtag(...args) { window.dataLayer.push(...args); }
     window.gtag = gtag;
     gtag('js', new Date());
     gtag('config', GA_MEASUREMENT_ID, {
@@ -317,7 +321,7 @@
     });
   }
 
-  function toggleLanguage() {
+  function navigateToLanguage() {
     // URLベースで言語を切り替え（SEO対応: 各言語に固有のURLを持たせる）
     const currentPath = window.location.pathname;
     const isOnEnglishPage = currentPath.startsWith('/en');
@@ -328,8 +332,19 @@
       window.location.href = jaPath;
     } else {
       // 日本語→英語: /en/ プレフィックスを追加
-      const enPath = currentPath === '/' ? '/en/' : '/en' + currentPath;
+      const enPath = currentPath === '/' ? '/en/' : `/en${currentPath}`;
       window.location.href = enPath;
+    }
+  }
+
+  function toggleLanguage() {
+    if (gameActive) {
+      showConfirm([
+        translations.ja.langChangeMessage,
+        translations.en.langChangeMessage,
+      ], navigateToLanguage);
+    } else {
+      navigateToLanguage();
     }
   }
 
@@ -588,19 +603,38 @@
   }
 
   // 確認ダイアログ
+  let confirmAction = null;
+
   function setupConfirmDialog() {
     document.getElementById('confirm-no').addEventListener('click', () => {
       confirmModal.classList.add('hidden');
+      confirmAction = null;
     });
     document.getElementById('confirm-yes').addEventListener('click', () => {
       confirmModal.classList.add('hidden');
-      startNewGame();
+      if (confirmAction) {
+        confirmAction();
+        confirmAction = null;
+      }
     });
+  }
+
+  function showConfirm(message, action) {
+    const msgEl = document.getElementById('confirm-message');
+    if (msgEl) {
+      if (typeof message === 'string') {
+        msgEl.textContent = message;
+      } else {
+        msgEl.innerHTML = message.join('<br>');
+      }
+    }
+    confirmAction = action;
+    confirmModal.classList.remove('hidden');
   }
 
   function requestNewGame() {
     if (gameActive) {
-      confirmModal.classList.remove('hidden');
+      showConfirm(t.confirmMessage, startNewGame);
     } else {
       startNewGame();
     }
