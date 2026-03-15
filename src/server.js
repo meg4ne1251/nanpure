@@ -4,11 +4,12 @@ const fs = require('fs');
 const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
-const { generatePuzzle } = require('./sudoku');
+const { getPuzzle, initPools } = require('./puzzlePool');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const BASE_URL = process.env.BASE_URL || 'https://nanpure.meg4ne.net';
 
 // ビルド済みアセットのマニフェスト読み込み
 let assetManifest = {};
@@ -78,6 +79,31 @@ if (IS_PRODUCTION && fs.existsSync(path.join(__dirname, '..', 'dist'))) {
   );
 }
 
+// index.html テンプレートをキャッシュ
+let indexTemplate = null;
+function getIndexTemplate() {
+  if (!indexTemplate) {
+    let html = fs.readFileSync(path.join(__dirname, '..', 'public', 'index.html'), 'utf8');
+
+    // 本番環境: minifyされたアセットに差し替え
+    if (IS_PRODUCTION && assetManifest['style.css']) {
+      html = html.replace(
+        '<link rel="stylesheet" href="style.css" />',
+        `<link rel="stylesheet" href="/assets/${assetManifest['style.css']}" />`,
+      );
+    }
+    if (IS_PRODUCTION && assetManifest['app.js']) {
+      html = html.replace(
+        '<script src="app.js"></script>',
+        `<script src="/assets/${assetManifest['app.js']}"></script>`,
+      );
+    }
+
+    indexTemplate = html;
+  }
+  return indexTemplate;
+}
+
 // 日本語ホームページ（テンプレート経由で本番アセットを適用）
 app.get('/', (req, res) => {
   res.set('Cache-Control', 'public, max-age=3600');
@@ -112,7 +138,7 @@ app.get('/api/puzzle', puzzleRateLimiter, (req, res) => {
     return res.status(400).json({ error: 'Invalid difficulty. Use: easy, medium, hard' });
   }
   try {
-    const result = generatePuzzle(difficulty);
+    const result = getPuzzle(difficulty);
     return res.json(result);
   } catch (err) {
     // eslint-disable-next-line no-console
@@ -186,56 +212,28 @@ const ENGLISH_HOME_META = {
   keywords: 'sudoku,nanpure,number place,puzzle,free,online,brain training,logic puzzle',
 };
 
-// index.html テンプレートをキャッシュ
-let indexTemplate = null;
-function getIndexTemplate() {
-  if (!indexTemplate) {
-    let html = fs.readFileSync(path.join(__dirname, '..', 'public', 'index.html'), 'utf8');
-
-    // 本番環境: minifyされたアセットに差し替え
-    if (IS_PRODUCTION && assetManifest['style.css']) {
-      html = html.replace(
-        '<link rel="stylesheet" href="style.css" />',
-        `<link rel="stylesheet" href="/assets/${assetManifest['style.css']}" />`,
-      );
-    }
-    if (IS_PRODUCTION && assetManifest['app.js']) {
-      html = html.replace(
-        '<script src="app.js"></script>',
-        `<script src="/assets/${assetManifest['app.js']}"></script>`,
-      );
-    }
-
-    indexTemplate = html;
-  }
-  return indexTemplate;
-}
-
 // hreflang タグを正しいURLに更新
-function applyHreflang(page, diff) {
-  const baseUrl = 'https://nanpure.meg4ne.net';
+function applyHreflang(html, diff) {
+  const baseUrl = BASE_URL;
   const jaPath = diff ? `/${diff}` : '/';
   const enPath = diff ? `/en/${diff}` : '/en/';
 
-  page = page.replace(
+  return html.replace(
     /<link rel="alternate" hreflang="ja" href="[^"]*"\s*\/>/,
     `<link rel="alternate" hreflang="ja" href="${baseUrl}${jaPath}" />`,
-  );
-  page = page.replace(
+  ).replace(
     /<link rel="alternate" hreflang="en" href="[^"]*"\s*\/>/,
     `<link rel="alternate" hreflang="en" href="${baseUrl}${enPath}" />`,
-  );
-  page = page.replace(
+  ).replace(
     /<link rel="alternate" hreflang="x-default" href="[^"]*"\s*\/>/,
     `<link rel="alternate" hreflang="x-default" href="${baseUrl}/" />`,
   );
-  return page;
 }
 
 function generateDifficultyPage(diff, lang = 'ja') {
   const meta = DIFFICULTY_META[diff];
   const template = getIndexTemplate();
-  const baseUrl = 'https://nanpure.meg4ne.net';
+  const baseUrl = BASE_URL;
   const isEnglish = lang === 'en';
   const langMeta = meta[lang];
   const prefix = isEnglish ? '/en' : '';
@@ -246,8 +244,12 @@ function generateDifficultyPage(diff, lang = 'ja') {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: homeName, item: `${baseUrl}${prefix}/` },
-      { '@type': 'ListItem', position: 2, name: langMeta.h1, item: `${baseUrl}${prefix}/${diff}` },
+      {
+        '@type': 'ListItem', position: 1, name: homeName, item: `${baseUrl}${prefix}/`,
+      },
+      {
+        '@type': 'ListItem', position: 2, name: langMeta.h1, item: `${baseUrl}${prefix}/${diff}`,
+      },
     ],
   });
 
@@ -378,7 +380,7 @@ function generateDifficultyPage(diff, lang = 'ja') {
 // 英語ホームページ生成
 function generateEnglishHomePage() {
   let page = getIndexTemplate();
-  const baseUrl = 'https://nanpure.meg4ne.net';
+  const baseUrl = BASE_URL;
   const meta = ENGLISH_HOME_META;
 
   // html lang
@@ -462,7 +464,8 @@ app.get('/hard', (req, res) => {
 app.get('/en', (req, res) => {
   // strict routing off では /en と /en/ 両方マッチする
   if (req.path === '/en') {
-    return res.redirect(301, '/en/');
+    res.redirect(301, '/en/');
+    return;
   }
   res.set('Cache-Control', 'public, max-age=3600');
   res.type('html').send(generateEnglishHomePage());
@@ -506,6 +509,9 @@ app.use((req, res) => {
 
 // Only start server if this file is run directly (not imported for testing)
 if (require.main === module) {
+  // パズルプールの初期充填を開始
+  initPools();
+
   const server = app.listen(PORT, () => {
     // eslint-disable-next-line no-console
     console.log(`ナンプレサーバー起動: http://localhost:${PORT}`);
