@@ -78,6 +78,12 @@ if (IS_PRODUCTION && fs.existsSync(path.join(__dirname, '..', 'dist'))) {
   );
 }
 
+// 日本語ホームページ（テンプレート経由で本番アセットを適用）
+app.get('/', (req, res) => {
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.type('html').send(getIndexTemplate());
+});
+
 // 静的ファイルのキャッシュ設定
 app.use(
   express.static(path.join(__dirname, '..', 'public'), {
@@ -500,10 +506,19 @@ app.use((req, res) => {
 
 // Only start server if this file is run directly (not imported for testing)
 if (require.main === module) {
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     // eslint-disable-next-line no-console
     console.log(`ナンプレサーバー起動: http://localhost:${PORT}`);
   });
+
+  // Graceful shutdown
+  const shutdown = () => {
+    server.close(() => {
+      process.exit(0);
+    });
+  };
+  process.on('SIGTERM', shutdown);
+  process.on('SIGINT', shutdown);
 }
 
 module.exports = app;
