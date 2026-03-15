@@ -22,11 +22,18 @@ const refilling = {
 // 停止フラグ
 let stopped = false;
 
+// 実行中のWorker追跡
+const activeWorkers = new Set();
+
 // Workerスレッドでパズルを1つ生成
 function generateOneInWorker(difficulty) {
   return new Promise((resolve, reject) => {
     const worker = new Worker(path.join(__dirname, 'puzzleWorker.js'));
+    activeWorkers.add(worker);
+    let settled = false;
     worker.on('message', (msg) => {
+      settled = true;
+      activeWorkers.delete(worker);
       worker.terminate();
       if (msg.error) {
         reject(new Error(msg.error));
@@ -35,8 +42,16 @@ function generateOneInWorker(difficulty) {
       }
     });
     worker.on('error', (err) => {
+      settled = true;
+      activeWorkers.delete(worker);
       worker.terminate();
       reject(err);
+    });
+    worker.on('exit', (code) => {
+      activeWorkers.delete(worker);
+      if (!settled) {
+        reject(new Error(`Worker exited unexpectedly with code ${code}`));
+      }
     });
     worker.postMessage(difficulty);
   });
@@ -98,9 +113,13 @@ function getPoolStatus() {
   };
 }
 
-// プール停止（テスト用）
+// プール停止（テスト・シャットダウン用）
 function stopPools() {
   stopped = true;
+  for (const worker of activeWorkers) {
+    worker.terminate();
+  }
+  activeWorkers.clear();
 }
 
 module.exports = { getPuzzle, initPools, getPoolStatus, stopPools };

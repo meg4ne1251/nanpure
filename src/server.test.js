@@ -1,5 +1,10 @@
 const request = require('supertest');
 const app = require('./server');
+const { stopPools } = require('./puzzlePool');
+
+afterAll(() => {
+  stopPools();
+});
 
 describe('Server', () => {
   describe('GET /api/puzzle', () => {
