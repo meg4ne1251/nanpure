@@ -4,7 +4,7 @@ const fs = require('fs');
 const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
-const { getPuzzle, initPools } = require('./puzzlePool');
+const { getPuzzle, initPools, stopPools } = require('./puzzlePool');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,7 +15,12 @@ const BASE_URL = process.env.BASE_URL || 'https://nanpure.meg4ne.net';
 let assetManifest = {};
 const manifestPath = path.join(__dirname, '..', 'dist', 'manifest.json');
 if (IS_PRODUCTION && fs.existsSync(manifestPath)) {
-  assetManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  try {
+    assetManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to parse asset manifest:', err.message);
+  }
 }
 
 // gzip圧縮
@@ -111,6 +116,7 @@ app.get('/', (req, res) => {
 });
 
 // 静的ファイルのキャッシュ設定
+const IMAGE_EXT_RE = /\.(png|jpg|jpeg|gif|ico|svg|webp)$/;
 app.use(
   express.static(path.join(__dirname, '..', 'public'), {
     maxAge: '7d',
@@ -124,7 +130,7 @@ app.use(
         res.setHeader('Cache-Control', 'public, max-age=604800');
       }
       // 画像は長めのキャッシュ
-      if (filePath.match(/\.(png|jpg|jpeg|gif|ico|svg|webp)$/)) {
+      if (IMAGE_EXT_RE.test(filePath)) {
         res.setHeader('Cache-Control', 'public, max-age=2592000');
       }
     },
@@ -519,6 +525,7 @@ if (require.main === module) {
 
   // Graceful shutdown
   const shutdown = () => {
+    stopPools();
     server.close(() => {
       process.exit(0);
     });

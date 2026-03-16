@@ -426,8 +426,10 @@ function xWing(board, cands) {
   return changed;
 }
 
-// 全ユニット一覧
+// 全ユニット一覧（不変データのためキャッシュ）
+let cachedAllUnits = null;
 function getAllUnits() {
+  if (cachedAllUnits) return cachedAllUnits;
   const units = [];
   for (let i = 0; i < 9; i++) {
     units.push(getRowCells(i));
@@ -438,6 +440,7 @@ function getAllUnits() {
       units.push(getBoxCells(br, bc));
     }
   }
+  cachedAllUnits = units;
   return units;
 }
 

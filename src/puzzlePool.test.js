@@ -1,4 +1,6 @@
-const { getPuzzle, initPools, getPoolStatus, stopPools } = require('./puzzlePool');
+const {
+  getPuzzle, initPools, getPoolStatus, stopPools,
+} = require('./puzzlePool');
 
 afterAll(() => {
   stopPools();
@@ -17,7 +19,9 @@ describe('PuzzlePool', () => {
   }, 15000);
 
   it('should work for all difficulty levels', async () => {
+    // eslint-disable-next-line no-restricted-syntax
     for (const diff of ['easy', 'medium', 'hard']) {
+      // eslint-disable-next-line no-await-in-loop
       const result = await getPuzzle(diff);
       expect(result).toHaveProperty('puzzle');
       expect(result).toHaveProperty('solution');
@@ -28,6 +32,7 @@ describe('PuzzlePool', () => {
   it('should initialize pools and report status', async () => {
     initPools();
     // Workerスレッドでの補充は非同期なので、少し待ってから確認
+    // eslint-disable-next-line no-promise-executor-return
     await new Promise((resolve) => setTimeout(resolve, 15000));
     const status = getPoolStatus();
     expect(status.easy).toBeGreaterThan(0);
@@ -45,6 +50,7 @@ describe('PuzzlePool', () => {
     expect(getPoolStatus().easy).toBe(0);
 
     // Worker補充が始まるので待つ
+    // eslint-disable-next-line no-promise-executor-return
     await new Promise((resolve) => setTimeout(resolve, 15000));
     const afterStatus = getPoolStatus();
     // 補充されてプールにパズルが戻っていることを確認

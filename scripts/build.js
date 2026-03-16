@@ -30,7 +30,7 @@ async function build() {
     loader: { '.css': 'css' },
   });
   const cssContent = cssResult.outputFiles[0].text;
-  const cssHash = crypto.createHash('md5').update(cssContent).digest('hex').slice(0, 8);
+  const cssHash = crypto.createHash('sha256').update(cssContent).digest('hex').slice(0, 8);
   const cssFileName = `style.${cssHash}.min.css`;
   fs.writeFileSync(path.join(DIST_DIR, cssFileName), cssContent);
 
@@ -44,7 +44,7 @@ async function build() {
     loader: { '.js': 'js' },
   });
   const jsContent = jsResult.outputFiles[0].text;
-  const jsHash = crypto.createHash('md5').update(jsContent).digest('hex').slice(0, 8);
+  const jsHash = crypto.createHash('sha256').update(jsContent).digest('hex').slice(0, 8);
   const jsFileName = `app.${jsHash}.min.js`;
   fs.writeFileSync(path.join(DIST_DIR, jsFileName), jsContent);
 

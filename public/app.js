@@ -288,7 +288,7 @@
     document.head.appendChild(script);
 
     window.dataLayer = window.dataLayer || [];
-    function gtag(...args) { window.dataLayer.push(...args); }
+    function gtag(...args) { window.dataLayer.push(args); }
     window.gtag = gtag;
     gtag('js', new Date());
     gtag('config', GA_MEASUREMENT_ID, {
@@ -370,7 +370,7 @@
   let memoMode = false;
   let mistakes = 0;
   let timerInterval = null;
-  let seconds = 0;
+  let startTime = 0; // ゲーム開始時刻（Date.now()ベース）
   let gameActive = false;
 
   // Undo/Redo 履歴
@@ -401,7 +401,7 @@
         board,
         memos: memos.map((r) => r.map((s) => [...s])),
         mistakes,
-        seconds,
+        seconds: getElapsedSeconds(),
         difficulty,
       };
       localStorage.setItem('nanpure-game', JSON.stringify(data));
@@ -563,7 +563,7 @@
     board = savedData.board;
     memos = savedData.memos;
     mistakes = savedData.mistakes;
-    seconds = savedData.seconds || 0;
+    startTime = Date.now() - (savedData.seconds || 0) * 1000;
     difficulty = savedData.difficulty || 'medium';
     memoMode = false;
     selected = null;
@@ -586,9 +586,8 @@
 
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(() => {
-      seconds++;
       updateTimer();
-      if (seconds % 30 === 0) saveGameToStorage();
+      if (getElapsedSeconds() % 30 === 0) saveGameToStorage();
     }, 1000);
   }
 
@@ -625,7 +624,11 @@
       if (typeof message === 'string') {
         msgEl.textContent = message;
       } else {
-        msgEl.innerHTML = message.join('<br>');
+        msgEl.textContent = '';
+        message.forEach((line, i) => {
+          if (i > 0) msgEl.appendChild(document.createElement('br'));
+          msgEl.appendChild(document.createTextNode(line));
+        });
       }
     }
     confirmAction = action;
@@ -845,7 +848,7 @@
     gameActive = false;
     selected = null;
     mistakes = 0;
-    seconds = 0;
+    startTime = Date.now();
     memoMode = false;
     history = [];
     historyIndex = -1;
@@ -881,10 +884,10 @@
 
       trackEvent('game_start', { difficulty });
 
+      startTime = Date.now();
       timerInterval = setInterval(() => {
-        seconds++;
         updateTimer();
-        if (seconds % 30 === 0) saveGameToStorage();
+        if (getElapsedSeconds() % 30 === 0) saveGameToStorage();
       }, 1000);
     } catch (err) {
       // eslint-disable-next-line no-console
@@ -1064,15 +1067,16 @@
     if (timerInterval) clearInterval(timerInterval);
     clearGameStorage();
 
+    const finalSeconds = getElapsedSeconds();
     completeDifficulty.textContent = `${t.difficultyLabel}: ${getDifficultyLabel(difficulty)}`;
-    completeTime.textContent = `${t.timeLabel}: ${formatTime(seconds)}`;
+    completeTime.textContent = `${t.timeLabel}: ${formatTime(finalSeconds)}`;
     completeMistakes.textContent = `${t.mistakesLabel}: ${mistakes}${t.mistakesCount}`;
     syncCompleteDifficultyButtons();
     completeModal.classList.remove('hidden');
 
     trackEvent('game_complete', {
       difficulty,
-      time_seconds: seconds,
+      time_seconds: finalSeconds,
       mistakes,
     });
   }
@@ -1085,7 +1089,7 @@
 
   function getShareText() {
     const diffLabel = getDifficultyLabel(difficulty);
-    const time = formatTime(seconds);
+    const time = formatTime(getElapsedSeconds());
     return t.shareText(diffLabel, time, mistakes);
   }
 
@@ -1133,8 +1137,12 @@
   }
 
   // タイマー
+  function getElapsedSeconds() {
+    return Math.floor((Date.now() - startTime) / 1000);
+  }
+
   function updateTimer() {
-    timerEl.textContent = formatTime(seconds);
+    timerEl.textContent = formatTime(getElapsedSeconds());
   }
 
   function formatTime(s) {

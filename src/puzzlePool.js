@@ -65,6 +65,7 @@ async function refillPool(difficulty) {
   try {
     while (pools[difficulty].length < POOL_SIZE && !stopped) {
       try {
+        // eslint-disable-next-line no-await-in-loop
         const puzzle = await generateOneInWorker(difficulty);
         pools[difficulty].push(puzzle);
       } catch (err) {
@@ -79,6 +80,9 @@ async function refillPool(difficulty) {
 
 // プールからパズルを取得（プールが空ならWorkerで生成にフォールバック）
 async function getPuzzle(difficulty) {
+  if (!DIFFICULTIES.includes(difficulty)) {
+    throw new Error(`Invalid difficulty: ${difficulty}`);
+  }
   const puzzle = pools[difficulty].shift();
 
   // プールが閾値以下になったらバックグラウンド補充開始
@@ -99,6 +103,7 @@ function initPools() {
   stopped = false;
   // eslint-disable-next-line no-console
   console.log('パズルプール初期化開始...');
+  // eslint-disable-next-line no-restricted-syntax
   for (const diff of DIFFICULTIES) {
     refillPool(diff);
   }
@@ -116,10 +121,13 @@ function getPoolStatus() {
 // プール停止（テスト・シャットダウン用）
 function stopPools() {
   stopped = true;
+  // eslint-disable-next-line no-restricted-syntax
   for (const worker of activeWorkers) {
     worker.terminate();
   }
   activeWorkers.clear();
 }
 
-module.exports = { getPuzzle, initPools, getPoolStatus, stopPools };
+module.exports = {
+  getPuzzle, initPools, getPoolStatus, stopPools,
+};
