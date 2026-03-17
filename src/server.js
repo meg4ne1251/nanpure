@@ -452,41 +452,38 @@ function generateEnglishHomePage() {
   return page;
 }
 
-// 難易度別ページルーティング（日本語）
-app.get('/easy', (req, res) => {
+// 生成ページのキャッシュ（決定的な出力のため毎リクエスト再生成は不要）
+const pageCache = {};
+function getCachedPage(cacheKey, generator) {
+  if (!pageCache[cacheKey]) {
+    pageCache[cacheKey] = generator();
+  }
+  return pageCache[cacheKey];
+}
+
+function sendCachedHtml(res, cacheKey, generator) {
   res.set('Cache-Control', 'public, max-age=3600');
-  res.type('html').send(generateDifficultyPage('easy'));
-});
-app.get('/medium', (req, res) => {
-  res.set('Cache-Control', 'public, max-age=3600');
-  res.type('html').send(generateDifficultyPage('medium'));
-});
-app.get('/hard', (req, res) => {
-  res.set('Cache-Control', 'public, max-age=3600');
-  res.type('html').send(generateDifficultyPage('hard'));
+  res.type('html').send(getCachedPage(cacheKey, generator));
+}
+
+// 難易度別ページルーティング（日本語・英語）
+['easy', 'medium', 'hard'].forEach((diff) => {
+  app.get(`/${diff}`, (req, res) => {
+    sendCachedHtml(res, `${diff}-ja`, () => generateDifficultyPage(diff));
+  });
+  app.get(`/en/${diff}`, (req, res) => {
+    sendCachedHtml(res, `${diff}-en`, () => generateDifficultyPage(diff, 'en'));
+  });
 });
 
-// 英語ページルーティング
+// 英語ホームページルーティング
 app.get('/en', (req, res) => {
   // strict routing off では /en と /en/ 両方マッチする
   if (req.path === '/en') {
     res.redirect(301, '/en/');
     return;
   }
-  res.set('Cache-Control', 'public, max-age=3600');
-  res.type('html').send(generateEnglishHomePage());
-});
-app.get('/en/easy', (req, res) => {
-  res.set('Cache-Control', 'public, max-age=3600');
-  res.type('html').send(generateDifficultyPage('easy', 'en'));
-});
-app.get('/en/medium', (req, res) => {
-  res.set('Cache-Control', 'public, max-age=3600');
-  res.type('html').send(generateDifficultyPage('medium', 'en'));
-});
-app.get('/en/hard', (req, res) => {
-  res.set('Cache-Control', 'public, max-age=3600');
-  res.type('html').send(generateDifficultyPage('hard', 'en'));
+  sendCachedHtml(res, 'home-en', generateEnglishHomePage);
 });
 
 // 未定義APIルートの404ハンドラ
@@ -524,11 +521,18 @@ if (require.main === module) {
   });
 
   // Graceful shutdown
+  const SHUTDOWN_TIMEOUT_MS = 10000;
   const shutdown = () => {
     stopPools();
     server.close(() => {
       process.exit(0);
     });
+    // keep-alive接続が残る場合にハングを防止
+    setTimeout(() => {
+      // eslint-disable-next-line no-console
+      console.error('Shutdown timed out, forcing exit');
+      process.exit(1);
+    }, SHUTDOWN_TIMEOUT_MS).unref();
   };
   process.on('SIGTERM', shutdown);
   process.on('SIGINT', shutdown);

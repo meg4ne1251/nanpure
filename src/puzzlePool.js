@@ -4,6 +4,7 @@ const path = require('path');
 const DIFFICULTIES = ['easy', 'medium', 'hard'];
 const POOL_SIZE = 15;
 const REFILL_THRESHOLD = 7;
+const MAX_CONSECUTIVE_FAILURES = 5;
 
 // 難易度ごとのパズルプール
 const pools = {
@@ -62,15 +63,23 @@ async function refillPool(difficulty) {
   if (refilling[difficulty]) return;
   refilling[difficulty] = true;
 
+  let consecutiveFailures = 0;
   try {
     while (pools[difficulty].length < POOL_SIZE && !stopped) {
       try {
         // eslint-disable-next-line no-await-in-loop
         const puzzle = await generateOneInWorker(difficulty);
         pools[difficulty].push(puzzle);
+        consecutiveFailures = 0;
       } catch (err) {
+        consecutiveFailures++;
         // eslint-disable-next-line no-console
         console.error(`Pool: ${difficulty} puzzle generation failed:`, err.message);
+        if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+          // eslint-disable-next-line no-console
+          console.error(`Pool: ${difficulty} aborting refill after ${MAX_CONSECUTIVE_FAILURES} consecutive failures`);
+          break;
+        }
       }
     }
   } finally {
@@ -87,7 +96,7 @@ async function getPuzzle(difficulty) {
 
   // プールが閾値以下になったらバックグラウンド補充開始
   if (pools[difficulty].length < REFILL_THRESHOLD) {
-    refillPool(difficulty);
+    refillPool(difficulty).catch(() => {});
   }
 
   if (puzzle) {
@@ -105,7 +114,7 @@ function initPools() {
   console.log('パズルプール初期化開始...');
   // eslint-disable-next-line no-restricted-syntax
   for (const diff of DIFFICULTIES) {
-    refillPool(diff);
+    refillPool(diff).catch(() => {});
   }
 }
 

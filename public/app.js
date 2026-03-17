@@ -457,6 +457,16 @@
       const resumeBtn = document.getElementById('resume-game');
       if (resumeBtn) resumeBtn.classList.remove('hidden');
     }
+
+    // タブ離脱・非表示時にゲーム状態を保存
+    window.addEventListener('beforeunload', () => {
+      saveGameToStorage();
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') {
+        saveGameToStorage();
+      }
+    });
   }
 
   // === クリアモーダル内の難易度選択 ===
@@ -873,7 +883,6 @@
       history = [
         {
           board: board.map((r) => [...r]),
-          memos: memos.map((r) => r.map((s) => new Set(s))),
         },
       ];
       historyIndex = 0;
