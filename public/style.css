@@ -1035,10 +1035,12 @@ h1 {
   width: 100%;
   max-width: 440px;
   min-height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   margin: 4px 0;
+}
+
+.ad-container .adsbygoogle {
+  width: 100%;
 }
 
 .ad-in-game {

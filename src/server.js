@@ -38,6 +38,7 @@ app.use(
           'https://pagead2.googlesyndication.com',
           'https://www.googletagmanager.com',
           'https://www.google-analytics.com',
+          'https://static.cloudflareinsights.com',
         ],
         styleSrc: ["'self'", "'unsafe-inline'"],
         imgSrc: [
@@ -55,6 +56,7 @@ app.use(
           'https://www.googletagmanager.com',
           'https://*.google-analytics.com',
           'https://*.analytics.google.com',
+          'https://*.adtrafficquality.google',
         ],
       },
     },
